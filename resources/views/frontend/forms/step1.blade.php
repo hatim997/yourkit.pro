@@ -18,6 +18,12 @@
                                     alt="" id="pr_image_{{ $product->id }}">
                             </div>
                             <h4>{{ $product->pivot->quantity }} {{ $product->name }}</h4>
+                            @if ($product->sub_category_id == '1' || $product->sub_category_id == '2' )
+                                <p class="remaining-text" id="remaining-text-{{ $product->id }}" style="color: red;">
+                                    {{ $product->pivot->quantity }} {{ $product->name }}s remaining to select
+                                </p>
+                            @endif
+
 
                             <input type="hidden" class="printproducthid"
                                 data-productquantity="{{ $product->pivot->quantity }}"
@@ -172,6 +178,54 @@
                 console.log('Color Attribute ID:', colorAttrValue);
                 console.log('Image:', image);
             });
+
+            $('.productquant-{{ $product->id }}').on('change', function() {
+                updateRemaining($(this).data('productid'));
+            });
+
+            function updateRemaining(productId) {
+                let total = parseInt($(`.printproducthid[data-productquantity][value="${productId}"]`).data(
+                    'productquantity'));
+                let selectedTotal = 0;
+
+                $(`.productquant-${productId}`).each(function() {
+                    selectedTotal += parseInt($(this).val());
+                });
+
+                let remaining = total - selectedTotal;
+                let $remainingText = $(`#remaining-text-${productId}`);
+
+                if (remaining <= 0) {
+                    remaining = 0;
+                    $remainingText.css('color', 'green');
+                } else {
+                    $remainingText.css('color', 'red');
+                }
+
+                $remainingText.text(`${remaining} T-shirts remaining to select`);
+
+                // Update max options in selects
+                $(`.productquant-${productId}`).each(function() {
+                    let currentVal = parseInt($(this).val());
+                    let $select = $(this);
+                    let selectedSize = $select.data('size');
+
+                    $select.empty();
+                    for (let i = 0; i <= remaining + currentVal; i++) {
+                        $select.append(
+                            `<option value="${i}" ${i === currentVal ? 'selected' : ''}>${i}</option>`);
+                    }
+                });
+            }
+
+            // Bind initial change events
+            @foreach ($bundle->products as $product)
+                @if (!$product->size->isEmpty())
+                    $('.productquant-{{ $product->id }}').on('change', function() {
+                        updateRemaining({{ $product->id }});
+                    });
+                @endif
+            @endforeach
         });
     </script>
 @endpush
