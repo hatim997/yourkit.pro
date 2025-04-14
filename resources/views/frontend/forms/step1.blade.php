@@ -23,7 +23,8 @@
                                 data-productquantity="{{ $product->pivot->quantity }}"
                                 name="product[{{ $key }}][id]" value="{{ $product->id }}">
 
-                            <input type="hidden" id="size_extra_cost_{{ $product->id }}" name="product[{{ $key }}][size_extra_cost]" value="0.00">
+                            <input type="hidden" id="size_extra_cost_{{ $product->id }}"
+                                name="product[{{ $key }}][size_extra_cost]" value="0.00">
 
                             <div class="filters-color">
                                 <label for="select-color">Select Color</label>
@@ -42,8 +43,8 @@
                                     <input type="hidden" name="product[{{ $key }}][color_attribute_id]"
                                         value="{{ $product->color[0]->attr_id }}" id="color_attr_{{ $key }}">
 
-                                    <input type="hidden" name="product[{{ $key }}][color]" value="{{ $product->color[0]->value }}"
-                                        id="color_{{ $key }}">
+                                    <input type="hidden" name="product[{{ $key }}][color]"
+                                        value="{{ $product->color[0]->value }}" id="color_{{ $key }}">
 
                                 </div>
                             </div>
@@ -56,8 +57,10 @@
                                                 <label>{{ $size->value }}</label>
 
                                                 <!-- Quantity selection for each size -->
-                                                <select class="form-select form-select-sm productsize productquant-{{ $product->id }}"
-                                                    data-cost="{{ $size->extra_cost }}" data-size="{{ $size->value }}" data-productid="{{ $product->id }}"
+                                                <select
+                                                    class="form-select form-select-sm productsize productquant-{{ $product->id }}"
+                                                    data-cost="{{ $size->extra_cost }}" data-size="{{ $size->value }}"
+                                                    data-productid="{{ $product->id }}"
                                                     id="productquant-{{ $product->id . '-' . $size->value }}"
                                                     name="product[{{ $key }}][size][{{ $key3 }}][quantity]">
 
@@ -80,7 +83,8 @@
                                                     value="{{ $size->extra_cost }}">
                                             </div>
 
-                                            <input type="hidden" name="product[{{ $key }}][type]" value="{{ $product->slug }}">
+                                            <input type="hidden" name="product[{{ $key }}][type]"
+                                                value="{{ $product->slug }}">
                                         @endforeach
                                     @else
                                         <!-- Handling one-size items -->
@@ -141,34 +145,33 @@
         // })
 
         $(document).ready(function() {
-    $('.color-selector .entry').on('click', function(e) {
-        e.preventDefault();
+            $('.color-selector .entry').on('click', function(e) {
+                e.preventDefault();
 
-        let image = $(this).data('image');
-        let rowKey = $(this).data('key');
-        let productId = $(this).data('prid');
-        let colorValue = $(this).data('color');
-        let colorAttrValue = $(this).data('attrval');
+                let image = $(this).data('image');
+                let rowKey = $(this).data('key');
+                let productId = $(this).data('prid');
+                let colorValue = $(this).data('color');
+                let colorAttrValue = $(this).data('attrval');
 
-        // Update product image
-        $('#pr_image_' + productId).attr('src', image);
+                // Update product image
+                $('#pr_image_' + productId).attr('src', image);
 
-        // Update hidden inputs with selected color
-        $(`#color_${rowKey}`).val(colorValue);
-        $(`#color_attr_${rowKey}`).val(colorAttrValue);
+                // Update hidden inputs with selected color
+                $(`#color_${rowKey}`).val(colorValue);
+                $(`#color_attr_${rowKey}`).val(colorAttrValue);
 
-        // Remove active class from all other colors in the same selector
-        $(this).closest('.color-selector').find('.entry').removeClass('active');
+                // Remove active class from all other colors in the same selector
+                $(this).closest('.color-selector').find('.entry').removeClass('active');
 
-        // Add active class to the newly selected color
-        $(this).addClass('active');
+                // Add active class to the newly selected color
+                $(this).addClass('active');
 
-        console.log('Row Key:', rowKey);
-        console.log('Color:', colorValue);
-        console.log('Color Attribute ID:', colorAttrValue);
-        console.log('Image:', image);
-    });
-});
-
+                console.log('Row Key:', rowKey);
+                console.log('Color:', colorValue);
+                console.log('Color Attribute ID:', colorAttrValue);
+                console.log('Image:', image);
+            });
+        });
     </script>
 @endpush

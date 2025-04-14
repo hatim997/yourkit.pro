@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\Tax;
 use App\Utils\Helper;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CartRepository extends BaseRepository
 {
@@ -62,8 +63,9 @@ class CartRepository extends BaseRepository
 
         return $carts;
     }
-    
-     public function getCartDetailsEdit(string $id){
+
+    public function getCartDetailsEdit(string $id)
+    {
         // return $this->findOrFail($id);
         return Cart::with(['bundle', 'contents'])->findOrFail($id);
     }
@@ -126,29 +128,60 @@ class CartRepository extends BaseRepository
         $bundle = Bundle::where('id', $data['table_id'])->first();
 
         if (!empty($data['position_count'])) {
-           
+            $productTypes = ['t-shirt', 'hoodie']; // define once
+
+            // Initialize cart flags once
+            foreach ($productTypes as $type) {
+                $cart["is_phone_on_{$type}"] = '0';
+                $cart["is_email_on_{$type}"] = '0';
+            }
+            $cart->is_phone_checked = '0';
+            $cart->is_email_checked = '0';
             foreach ($bundle->products as $product) {
                 $product_count = $data['position_count'][$product->sub_category_id];
-                 //dd($product_count);
+                //dd($product_count);
                 if ($product_count > 0) {
                     $cost = ($product_count - 1) * 3;
                     $totalPositionCost += $product->pivot->quantity * $cost;
                 }
 
+                $productType = strtolower($product->subCategory->name);
+                // dd($productType);
+                Log::info('product type '.$productType);
+                /** apply phone cost for selected product type **/
+                if (
+                    isset($data['is_phone_checked']) && $data['is_phone_checked'] === 'on' &&
+                    isset($data["is_phone_on_{$productType}"]) && $data["is_phone_on_{$productType}"] === 'on'
+                ) {
+                    $cart->is_phone_checked = 1;
+                    $cart["is_phone_on_{$productType}"] = '1';
+                    Log::info('is_phone_on_'.$productType.' '.$data["is_phone_on_{$productType}"]);
+                    $totalInfoDocCost += ($product->pivot->quantity *  2.00);
+                }
 
-            /** calculation for adding email **/
+                /** apply email cost for selected product type **/
+                if (
+                    isset($data['is_email_checked']) && $data['is_email_checked'] === 'on' &&
+                    isset($data["is_email_on_{$productType}"]) && $data["is_email_on_{$productType}"] === 'on'
+                ) {
+                    Log::info('is_email_on_'.$productType.' '.$data["is_email_on_{$productType}"]);
+                    $cart->is_email_checked = 1;
+                    $cart["is_email_on_{$productType}"] = '1';
+                    $totalInfoDocCost += ($product->pivot->quantity *  2.00);
+                }
+                // /** calculation for adding email **/
 
-            if ((isset($data['is_phone_checked']) && $data['is_phone_checked'] == 'on')) {
-                $cart->is_phone_checked = 1;
-                $totalInfoDocCost += ($product->pivot->quantity *  2.00);
-            }
+                // if ((isset($data['is_phone_checked']) && $data['is_phone_checked'] == 'on')) {
+                //     $cart->is_phone_checked = 1;
+                //     $totalInfoDocCost += ($product->pivot->quantity *  2.00);
+                // }
 
-            /** calculation for adding telephone **/
+                // /** calculation for adding telephone **/
 
-            if ((isset($data['is_email_checked']) && $data['is_email_checked'] == 'on')) {
-                $cart->is_email_checked = 1;
-                $totalInfoDocCost += ($product->pivot->quantity *  2.00);
-            }
+                // if ((isset($data['is_email_checked']) && $data['is_email_checked'] == 'on')) {
+                //     $cart->is_email_checked = 1;
+                //     $totalInfoDocCost += ($product->pivot->quantity *  2.00);
+                // }
             }
         }
 
@@ -166,11 +199,14 @@ class CartRepository extends BaseRepository
         $cart->total_cost = $totalCost;
         $cart->cartId = $cartId;
         $cart->save();
+
+        Log::info('cart after save'.$cart);
         return $cart->sessionId;
     }
 
-public function updateCartContents(array $data){
-// dd($data);
+    public function updateCartContents(array $data)
+    {
+        // dd($data);
         $totalSizeCost = 0.00;
         $totalPositionCost = 0.00;
         $totalInfoDocCost = 0.00;
@@ -178,7 +214,7 @@ public function updateCartContents(array $data){
 
         $cart = $this->findOrFail($data['cartId']);
         $cart->contents()->delete();
-       //dd($data);
+        //dd($data);
         foreach ($data['product'] as $key => $product) {
             //dd($product['type']);
             $sizeExtraCost = 0.00;
@@ -216,29 +252,60 @@ public function updateCartContents(array $data){
         $bundle = Bundle::where('id', $data['table_id'])->first();
 
         if (!empty($data['position_count'])) {
-        
+            $productTypes = ['t-shirt', 'hoodie']; // define once
+
+            // Initialize cart flags once
+            foreach ($productTypes as $type) {
+                $cart["is_phone_on_{$type}"] = '0';
+                $cart["is_email_on_{$type}"] = '0';
+            }
+            $cart->is_phone_checked = '0';
+            $cart->is_email_checked = '0';
             foreach ($bundle->products as $product) {
                 $product_count = $data['position_count'][$product->sub_category_id];
-                 //dd($product_count);
+                //dd($product_count);
                 if ($product_count > 0) {
                     $cost = ($product_count - 1) * 3;
                     $totalPositionCost += $product->pivot->quantity * $cost;
                 }
+                $productType = strtolower($product->subCategory->name);
+                // dd($productType);
+                Log::info('product type '.$productType);
+                /** apply phone cost for selected product type **/
+                if (
+                    isset($data['is_phone_checked']) && $data['is_phone_checked'] === 'on' &&
+                    isset($data["is_phone_on_{$productType}"]) && $data["is_phone_on_{$productType}"] === 'on'
+                ) {
+                    $cart->is_phone_checked = 1;
+                    $cart["is_phone_on_{$productType}"] = '1';
+                    Log::info('is_phone_on_'.$productType.' '.$data["is_phone_on_{$productType}"]);
+                    $totalInfoDocCost += ($product->pivot->quantity *  2.00);
+                }
 
+                /** apply email cost for selected product type **/
+                if (
+                    isset($data['is_email_checked']) && $data['is_email_checked'] === 'on' &&
+                    isset($data["is_email_on_{$productType}"]) && $data["is_email_on_{$productType}"] === 'on'
+                ) {
+                    Log::info('is_email_on_'.$productType.' '.$data["is_email_on_{$productType}"]);
+                    $cart->is_email_checked = 1;
+                    $cart["is_email_on_{$productType}"] = '1';
+                    $totalInfoDocCost += ($product->pivot->quantity *  2.00);
+                }
 
-            /** calculation for adding email **/
+                // /** calculation for adding email **/
 
-            if ((isset($data['is_phone_checked']) && $data['is_phone_checked'] == 'on')) {
-                $cart->is_phone_checked = 1;
-                $totalInfoDocCost += ($product->pivot->quantity *  2.00);
-            }
+                // if ((isset($data['is_phone_checked']) && $data['is_phone_checked'] == 'on')) {
+                //     $cart->is_phone_checked = 1;
+                //     $totalInfoDocCost += ($product->pivot->quantity *  2.00);
+                // }
 
-            /** calculation for adding telephone **/
+                // /** calculation for adding telephone **/
 
-            if ((isset($data['is_email_checked']) && $data['is_email_checked'] == 'on')) {
-                $cart->is_email_checked = 1;
-                $totalInfoDocCost += ($product->pivot->quantity *  2.00);
-            }
+                // if ((isset($data['is_email_checked']) && $data['is_email_checked'] == 'on')) {
+                //     $cart->is_email_checked = 1;
+                //     $totalInfoDocCost += ($product->pivot->quantity *  2.00);
+                // }
             }
         }
 
@@ -254,9 +321,9 @@ public function updateCartContents(array $data){
         $cart->info_extra_cost = $totalInfoDocCost;
         $cart->total_extra_cost = $totalExtraCost;
         $cart->total_cost = $totalCost;
+        $cart->comment = $data['comment'];
         $cart->save();
         return $cart->sessionId;
-
     }
 
 

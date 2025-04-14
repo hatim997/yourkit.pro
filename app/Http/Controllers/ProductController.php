@@ -54,10 +54,10 @@ class ProductController extends Controller
 
     public function store(Request $request, CartRepository $cartRepository)
     {
-
-       $input = $request->all();
+        // dd($request->all());
+        $input = $request->all();
         DB::beginTransaction();
-//dd( $input);
+        //dd( $input);
         try {
 
             if ($request->has('cartId')) {

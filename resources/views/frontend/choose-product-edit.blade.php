@@ -1,7 +1,7 @@
 @extends('frontend.layouts')
 
 @section('title', 'Products')
-
+{{-- @dd($cart) --}}
 @section('content')
 
     <section class="main-wrap">
@@ -130,14 +130,14 @@
     </script>
     <script>
          $(".next-step").click(function () {
-         
+
             $('html, body').animate({ scrollTop: $("#multi-step-form").offset().top }, 300);
-       
+
     });
 
     $(".prev-step").click(function () {
         $('html, body').animate({ scrollTop: $("#multi-step-form").offset().top }, 300);
-        
+
     });
         </script>
 @endpush

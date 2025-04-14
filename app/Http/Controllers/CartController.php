@@ -19,6 +19,8 @@ use App\Utils\Helper;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log as FacadesLog;
+use net\authorize\util\Log;
 
 class CartController extends Controller
 {
@@ -50,6 +52,7 @@ class CartController extends Controller
     {
 
         $carts = $this->cartRepository->getCartDetails($sessionId);
+        FacadesLog::info("Cart Info".$carts);
 
         $html = '';
         $total = 0;
@@ -236,11 +239,11 @@ class CartController extends Controller
             }
 
             $html .= '<div class="print-charge"><h5>Total :</h5><h5><strong>' .  (Helper::setting('currency-symbol') ?? '$')  . ($total ?? 0) . '</strong></h5></div>
-                   
-                  
+
+
                     </div> </div>';
         } else {
-            $html = ' <div class="container-xxl"><div class="cart-prt text-center"><span><strong> Cart is empty!</strong></span><div class="continue-prt py-4 justify-content-center">  
+            $html = ' <div class="container-xxl"><div class="cart-prt text-center"><span><strong> Cart is empty!</strong></span><div class="continue-prt py-4 justify-content-center">
                     <a href="' . route("home") . '" class="btn btn-outline-warning">Continue Shopping</a></div></div>';
         }
 
@@ -249,7 +252,7 @@ class CartController extends Controller
 
     public function submitCart(SubmitCartRequest $request)
     {
-        //return 
+        //return
         //dd($request->all());
 
         $fileArray = [];
@@ -460,15 +463,15 @@ class CartController extends Controller
             $request->validate([
                 'color' => 'required',
                 'size' => 'required',
-                'cart_image' => 'nullable|array', 
+                'cart_image' => 'nullable|array',
                 'cart_image.*' => 'nullable|mimes:jpg,jpeg,png|max:2048',
                 'quantity' => 'required|integer|min:1|max:9999',
                 'note' => [
                     function ($attribute, $value, $fail) use ($request) {
-                        $hasImages = !empty($request->file('cart_image')); 
+                        $hasImages = !empty($request->file('cart_image'));
                         $hasExistingImages = $request->input('has_existing_images') == "1"; // Check hidden field
-                        $hasNote = !empty($value); 
-            
+                        $hasNote = !empty($value);
+
                         if (($hasImages || $hasExistingImages) && !$hasNote) {
                             $fail('Note is required when logo images are uploaded.');
                         }
@@ -487,8 +490,8 @@ class CartController extends Controller
                 'cart_image.*.mimes' => 'Each image must be a JPG, JPEG, or PNG file.',
                 'cart_image.*.max' => 'Each image cannot exceed 2MB in size.',
             ]);
-            
-            
+
+
             // Fetch attribute values
             $col_attr = AttributeValue::where('value', $request->color)->first();
             $siz_attr = AttributeValue::where('value', $request->size)->first();
@@ -613,7 +616,7 @@ class CartController extends Controller
 
     public function submitCartEcom(Request $request)
     {
-        //return 
+        //return
         // return $request->all();
         \DB::beginTransaction();
 
@@ -621,14 +624,14 @@ class CartController extends Controller
             $request->validate([
                 'color' => 'required',
                 'size' => 'required',
-                'cart_image' => 'nullable|array', 
+                'cart_image' => 'nullable|array',
                 'cart_image.*' => 'nullable|mimes:jpg,jpeg,png|max:2048',
                 'quantity' => 'required|integer|min:1|max:9999',
                 'note' => [
                     function ($attribute, $value, $fail) use ($request) {
-                        $hasImages = !empty($request->file('cart_image')); 
-                        $hasNote = !empty($value); 
-                        
+                        $hasImages = !empty($request->file('cart_image'));
+                        $hasNote = !empty($value);
+
                         if ($hasImages && !$hasNote) {
                             $fail('Note is required when logo images are uploaded.');
                         }
@@ -647,7 +650,7 @@ class CartController extends Controller
                 'cart_image.*.mimes' => 'Each image must be a JPG, JPEG, or PNG file.',
                 'cart_image.*.max' => 'Each image cannot exceed 2MB in size.',
             ]);
-            
+
 
             $col_attr = AttributeValue::where('value', $request->color)->first();
             $siz_attr = AttributeValue::where('value', $request->size)->first();
