@@ -1,0 +1,6 @@
+.table > thead {
+	vertical-align: top;
+}
+option:hover {
+	background-color: #000;
+  }

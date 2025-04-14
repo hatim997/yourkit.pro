@@ -1,0 +1,4 @@
+.env
+/public/storage
+# app/storage/
+# storage/*.key

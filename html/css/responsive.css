@@ -1,0 +1,428 @@
+/*############## Responsive ################*/
+
+@media (max-width: 1400px) {
+
+	.banner .banner-inner-section .banner-txt h2 {
+		font-size: 62px;
+	}
+
+	.banner .banner-inner-section .banner-txt h4 {
+		font-size: 35px;
+	}
+
+	.banner .banner-inner-section .banner-txt {
+		width: 40%;
+	}
+}
+
+@media (max-width: 1199.98px) {
+
+	.header {
+		padding: 10px 0;
+	}
+
+	.banner .banner-inner-section .banner-txt h2 {
+		font-size: 50px;
+	}
+
+	.banner .banner-inner-section .banner-txt h4 {
+		font-size: 30px;
+	}
+
+	.top-title-prt .filter-lst {
+		width: 64%;
+	}
+
+	.offer-bx .offer-txt h4 {
+		font-size: 16px;
+	}
+
+	.offer-bx .offer-txt h3 {
+		font-size: 26px;
+	}
+
+	.category-bx .inr-txt h3 {
+		font-size: 23px;
+	}
+
+	.btn-outline-warning {
+		padding: 8px 20px !important;
+		font-size: 14px;
+	}
+
+	.footer .newsletter-prt h3 {
+		font-size: 30px;
+	}
+
+	.inr-ban .page-title {
+		font-size: 30px;
+		left: 2%;
+		top: 56%;
+		letter-spacing: 2px;
+	}
+
+}
+
+@media (max-width: 991.98px) {
+
+	.header {
+		position: static;
+	}
+
+	.navbar-toggler {
+		padding: 4px 8px;
+		background: rgb(255, 102, 0);
+		background: linear-gradient(270deg, rgba(255, 102, 0, 0.10126057258841037) 22%, rgba(56, 116, 255, 0.1) 53%, rgba(255, 238, 0, 1) 100%);
+	}
+
+	.navbar-collapse {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		width: 100%;
+		background-color: rgba(0, 0, 0, .9);
+		padding: 15px 10px;
+		border-radius: 5px;
+		z-index: 99;
+	}
+
+	.navbar .navbar-collapse .navbar-nav {
+		display: block;
+	}
+
+	.navbar .navbar-collapse .navbar-nav li {
+		margin: 0;
+		float: none;
+	}
+
+	.navbar .navbar-collapse .navbar-nav li a.nav-link {
+		font-size: 15px;
+		padding: 8px 0 !important;
+		color: #ddd;
+	}
+
+	.banner .banner-inner-section .banner-txt {
+		left: 3%;
+	}
+
+	.banner .banner-inner-section .banner-txt h4 {
+		font-size: 24px;
+	}
+
+	.banner .banner-inner-section .banner-txt h2 {
+		font-size: 44px;
+	}
+
+	.top-title-prt .filter-lst li .filter-ico {
+		width: 80px;
+		height: 80px;
+	}
+
+	.top-title-prt .filter-lst li h4 {
+		font-size: 14px;
+	}
+
+	.top-title-prt .filter-lst li {
+		margin: 0 6px;
+	}
+
+	.top-title-prt .style-txt-prt {
+		width: 38%;
+	}
+
+	.top-title-prt .style-txt-prt h2 {
+		font-size: 28px;
+	}
+
+	.top-title-prt .style-txt-prt p {
+		font-size: 15px;
+	}
+
+	.pro-bx {
+		padding: 15px 6px;
+	}
+
+	.pro-bx .price-tag {
+		right: 8px;
+		top: 8px;
+		width: 65px;
+		height: 65px;
+	}
+
+	.pro-bx .price-tag h5 {
+		font-size: 16px;
+	}
+
+	.pro-bx .quantity-info-lst li p {
+		font-size: 14px;
+	}
+
+	.pro-bx .pro-img {
+		height: 230px;
+	}
+
+	.offer-bx .offer-txt {
+		left: 3%;
+	}
+
+	.offer-bx .offer-txt h3 {
+		font-size: 18px;
+	}
+
+	.offer-bx .offer-txt h4 {
+		font-size: 12px;
+		padding: 5px 35px 5px 8px;
+	}
+
+	.custom-chng .offer-txt .btn-outline-warning {
+		font-size: 12px;
+		padding: 8px 14px !important;
+	}
+
+	.btn-outline-warning i {
+		margin-left: 6px;
+	}
+
+	.category-bx .inr-txt {
+		width: 60%;
+		left: 3%;
+	}
+
+	.category-bx .inr-txt h3 {
+		font-size: 20px;
+	}
+
+	.category-bx .inr-txt ul li {
+		font-size: 13px;
+		margin-bottom: 0px;
+	}
+
+	.mt-3 {
+		margin-top: .5rem !important;
+	}
+
+	.footer .newsletter-prt h3 {
+		font-size: 25px;
+		width: 35%;
+	}
+
+	.footer .newsletter-prt .newsletter-bx form input[type="email"] {
+		font-size: 15px;
+		height: 40px;
+		padding: 8px 10px;
+		width: 70%;
+	}
+
+	.btn-outline-warning {
+		padding: 8px 14px !important;
+		font-size: 14px;
+	}
+
+	.ps-4 {
+		padding-left: 0 !important;
+	}
+
+
+}
+
+@media (max-width: 767.98px) {
+	.navbar-brand {
+		width: 160px;
+		margin: 0;
+	}
+
+	.header .navbar .navbar-nav li {
+		padding: 0;
+	}
+
+	.header .my-ac-wrap ul li {
+		padding: 0px 5px;
+	}
+
+	.header .my-ac-wrap ul li .cart a .count {
+		right: -9px;
+		top: -10px;
+	}
+
+	.header .my-ac-wrap ul li a img {
+		width: 16px;
+	}
+
+	.header .my-ac-wrap ul li a i {
+		font-size: 18px;
+	}
+
+	.banner-slider .owl-dots .owl-dot button {
+		display: none;
+	}
+
+	.banner-slider .owl-dots {
+		right: 43px;
+	}
+
+	.banner-slider .owl-dots .owl-dot.active::after {
+		width: 40px;
+	}
+
+	.banner .banner-inner-section {
+		height: 210px;
+	}
+
+	.banner .banner-inner-section .banner-txt h2 {
+		font-size: 26px;
+	}
+
+	.banner .banner-inner-section .banner-txt h4 {
+		font-size: 16px;
+		margin: 8px 0 0;
+		padding: 5px 72px 5px 8px;
+	}
+
+	.banner .banner-inner-section .banner-txt {
+		width: 70%;
+	}
+
+	.top-title-prt {
+		display: block;
+	}
+
+	.top-title-prt .style-txt-prt {
+		width: 100%;
+	}
+
+	.top-title-prt .filter-lst {
+		width: 100%;
+		justify-content: center;
+	}
+
+	.top-title-prt .filter-lst li {
+		margin: 10px 6px;
+	}
+
+	.offer-bx {
+		display: block;
+	}
+
+	.offer-bx .offer-txt {
+		position: static;
+		width: 100%;
+		padding: 15px;
+	}
+
+	.offer-bx .offer-txt h4 {
+		font-size: 16px;
+	}
+
+	.offer-bx .offer-txt h3 {
+		font-size: 22px;
+	}
+
+	.mt-3 {
+		margin-top: 1rem !important;
+	}
+
+	.custom-chng .offer-txt h3 {
+		color: #212121;
+	}
+
+	.custom-chng .offer-txt .btn-outline-warning {
+		color: #212121;
+	}
+
+	.custom-chng .offer-txt h4 {
+		color: #212121;
+	}
+
+	.main-wrap {
+		padding: 40px 0;
+	}
+
+	.title-prt {
+		display: block;
+	}
+
+	.title-prt h2 {
+		font-size: 28px;
+		margin: 0 0 20px;
+	}
+
+	.deal-wrap {
+		padding: 40px 0;
+	}
+
+	.category-bx {
+		display: block;
+	}
+
+	.category-bx .inr-txt {
+		position: static;
+		width: 100%;
+		padding: 15px;
+	}
+
+	.category-bx .inr-txt ul {
+		display: inline-block;
+	}
+
+	.category-bx .inr-txt ul li {
+		font-size: 14px;
+		margin-bottom: 6px;
+	}
+
+	.footer .newsletter-prt {
+		padding: 0 0 25px;
+		display: block;
+	}
+
+	.footer .newsletter-prt h3 {
+		font-size: 24px;
+		width: 100%;
+		margin-bottom: 20px;
+	}
+
+	.footer .newsletter-prt .newsletter-bx {
+		width: 100%;
+	}
+
+	.footer {
+		padding: 35px 0;
+	}
+
+	.footer .footer-menu-list {
+		margin: 15px 0;
+	}
+
+	.footer .contact-lst {
+		margin: 0 0 15px;
+		padding: 0px;
+	}
+
+	.map-box {
+		margin-top: 25px;
+	}
+
+	.inr-ban .page-title {
+		font-size: 22px;
+		padding: 0 0 8px;
+		top: 50%;
+	}
+
+	.inr-ban .page-title::after {
+		width: 56px;
+		height: 2px;
+	}
+
+	.abt-img {
+		margin-bottom: 20px;
+	}
+
+	.title-prt h2 {
+		font-size: 24px !important;
+	}
+
+	.accordion-header button {
+		font-size: 15px;
+		font-weight: 500;
+		padding: 12px 10px;
+	}
+}
