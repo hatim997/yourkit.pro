@@ -25,7 +25,8 @@ class SubmitCartRequest extends FormRequest
             'file' => 'required_unless:is_logo_later,1|array',
             'file.*' => 'mimes:jpg,jpeg,png,pdf|max:2048',
             'is_logo_later' => 'nullable|boolean',
-            'comment' => 'required_unless:is_logo_later,1',
+            'comment' => 'nullable',
+            // 'comment' => 'required_unless:is_logo_later,1',
         ];
     }
 
@@ -37,7 +38,7 @@ class SubmitCartRequest extends FormRequest
             'file.*.mimes' => 'Each file must be a file of type: jpg, jpeg, png, pdf.',
             'file.*.max' => 'Each file may not be greater than 2MB.',
             'is_logo_later.boolean' => 'The is_logo_later field must be true or false.',
-            'comment.required_unless'=> 'The comment field is required required unless you select "is logo later".' 
+            // 'comment.required_unless'=> 'The comment field is required required unless you select "is logo later".'
         ];
     }
 }
