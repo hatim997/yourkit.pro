@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -186,11 +186,6 @@ return [
          * Package Service Providers...
          */
 
-        Spatie\Permission\PermissionServiceProvider::class,
-        Yajra\DataTables\DataTablesServiceProvider::class,
-        Yajra\DataTables\ButtonsServiceProvider::class,
-        Barryvdh\DomPDF\ServiceProvider::class,
-
         /*
          * Application Service Providers...
          */
@@ -199,6 +194,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\LocaleServiceProvider::class,
+        App\Providers\MailServiceProvider::class,
+        App\Providers\NotificationServiceProvider::class,
 
     ],
 
@@ -215,8 +213,6 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
-         'Helper' => App\Utils\Helper::class,
-         'PDF' => Barryvdh\DomPDF\Facade::class,
     ])->toArray(),
 
 ];

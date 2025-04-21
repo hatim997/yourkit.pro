@@ -137,7 +137,7 @@
                                             @endforeach
                                         </div>
 
-                                        <h5 class="price">{{ (Helper::setting('currency-symbol') ?? '$') . $bundle->price }}
+                                        <h5 class="price">{{ \App\Helpers\Helper::formatCurrency($bundle->price) }}
                                         </h5>
                                     </div>
 
@@ -164,61 +164,61 @@
                                                     style="background:{{ $attrContents->color }}; color:#ccc; padding:10px; display:inline-block; border:1px solid #ccc; width:20px; height:20px;">
                                                 </span></li>
                                                 <li><strong>Size:</strong>
-                                               
-                                                   
+
+
                                                     {{ $attrContents->size}}
-                                                   
-                                               
+
+
                                             </li>
                                             <li><strong>Quantities:</strong>
-                                               
-                                                   
+
+
                                                     {{ $attrContents->quantity}}
-                                                   
-                                               
+
+
                                             </li>
                                             <li><strong>Image:</strong>
-                                               
-                                                   
+
+
                                                 <span class="avater-img"><img src="{{url('storage/' . $attrContents->image)}}" alt=""></span>
-                                               
-                                           
+
+
                                         </li>
 
                                         @if($attrContents->cart_image)
                                             <li><strong>Logo Image:</strong></li>
-                                            @foreach ($attrContents->cart_image as $image) 
+                                            @foreach ($attrContents->cart_image as $image)
                                                <li><span class="avater-img"><img src="{{url('storage/' . $image)}}" alt=""></span></li>
                                            @endforeach
-                                          
-                                      
-                                       @else 
+
+
+                                       @else
                                           <li><strong>Logo Image:</strong> No image available</li>
                                        @endif
-                                       @if ($attrContents->note) 
+                                       @if ($attrContents->note)
                                       <li><strong>Note:</strong>{{$attrContents->note ??'' }}</li>
-                                       @else 
+                                       @else
                                           <li><strong>Note:</strong> No notes available</li>
                                     @endif
-                                            
+
                                         </ul>
-                                       
+
                                         {{-- @endforeach --}}
                                     @endforeach
                                 </div>
-                                    <h5 class="price">{{ (Helper::setting('currency-symbol') ?? '$') . $order->amount }}
+                                    <h5 class="price">{{ \App\Helpers\Helper::formatCurrency($order->amount) }}
                                     </h5>
-                                
 
-                               
+
+
                             </div>
 
                             <hr>
                             @endif
                             <div class="print-charge">
                                 <h5>Sub Total :</h5>
-                                <h5><strong>{{ (Helper::setting('currency-symbol') ?? '$') . $odr->amount }}</strong></h5>
-                                
+                                <h5><strong>{{ \App\Helpers\Helper::formatCurrency($odr->amount) }}</strong></h5>
+
                             </div>
                             @foreach($odr->tax as $tx)
                             @php
@@ -226,18 +226,18 @@
                         @endphp
                             <div class="print-charge">
                                 <h5>{{$tx->tax_type}} {{number_format($tax_t->percentage, 2)}}% ({{ $tax_t->tax_code}}):</h5>
-                                <h5><strong>{{ (Helper::setting('currency-symbol') ?? '$') .  round($tx->taxable_amount) }}</strong></h5>
-                                
+                                <h5><strong>{{ \App\Helpers\Helper::formatCurrency(round($tx->taxable_amount)) }}</strong></h5>
+
                             </div>
 @endforeach
 <div class="print-charge">
     <h5>Total :</h5>
-    <h5><strong>{{ (Helper::setting('currency-symbol') ?? '$') .  round($odr->final_amount) }}</strong></h5>
-    
+    <h5><strong>{{ \App\Helpers\Helper::formatCurrency(round($odr->final_amount)) }}</strong></h5>
+
 </div>
                             <div class="continue-prt py-4">
-                                {{-- <a href="{{ route('dashboard') }}" class="btn btn-outline-warning">Continue to Shopping</a> --}}
-                                <a href="{{ route('order.view') }}" class="btn btn-outline-warning">Back To Order List</a>
+                                {{-- <a href="{{ route('frontend.dashboard') }}" class="btn btn-outline-warning">Continue to Shopping</a> --}}
+                                <a href="{{ route('frontend.order.view') }}" class="btn btn-outline-warning">Back To Order List</a>
                             </div>
                         </div>
 
@@ -257,7 +257,7 @@
 
                                 <div class="col-md-4">
                                         <div> @if(!empty($odr->comment)) <span><strong>Comment:</strong>{{$odr->comment }}</span>@endif</div>
-                                    
+
                                     @if (!empty($odr->logo))
                                         <div>
                                             @foreach (json_decode($odr->logo) as $image)
@@ -422,7 +422,7 @@
 
                 // Send AJAX request to update the logo's status and comment
                 $.ajax({
-                    url: '{{ route('accept.logo') }}',
+                    url: '{{ route('frontend.accept.logo') }}',
                     method: 'POST',
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'),
@@ -465,7 +465,7 @@
         function deleteCart(id) {
             console.log(id);
 
-            let url = "{{ route('cart.delete', ['id' => ':id']) }}".replace(':id', id);
+            let url = "{{ route('frontend.cart.delete', ['id' => ':id']) }}".replace(':id', id);
 
             console.log('url ', url)
 
@@ -498,7 +498,7 @@
 
             $('#sessionId').val(sessionId);
 
-            let url = "{{ route('cart.all', ['sessionId' => ':sessionId']) }}".replace(':sessionId', sessionId);
+            let url = "{{ route('frontend.cart.all', ['sessionId' => ':sessionId']) }}".replace(':sessionId', sessionId);
 
             $.ajax({
                 type: 'GET',

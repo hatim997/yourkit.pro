@@ -2,19 +2,30 @@
 
 namespace App\Utils;
 
+use App\Models\CompanySetting;
 use App\Models\Setting;
+use App\Models\SystemSetting;
 
 class Helper {
 
+    // public static function setting($name)
+    // {
+    //     $items = Setting::all();
+    //     $settings = [];
+    //     foreach ($items as $key => $row) {
+    //         $settings[$row->setting_name] = $row->value;
+    //     }
+
+    //     return $settings[$name]  ?? "";
+    // }
     public static function setting($name)
     {
-        $items = Setting::all();
-        $settings = [];
-        foreach ($items as $key => $row) {
-            $settings[$row->setting_name] = $row->value;
+        if($name == 'currency-symbol'){
+            $currencySymbol = SystemSetting::first()->currency_symbol ?? '$';
+            return $currencySymbol ;
+        }else{
+            return '';
         }
-
-        return $settings[$name]  ?? "";
     }
 
     public static function keyValueExists($arrays, $key, $value)
@@ -38,7 +49,8 @@ class Helper {
     }
 
     public static function getOperationalContacts(){
-        return ["email" => self::setting("site_email"), "phone_number" => self::setting("site_phone")];
+        $companySetting = CompanySetting::first();
+        return ["email" => $companySetting->site_email, "phone_number" => $companySetting->site_phone];
     }
 
     public static function getCssVersion(){

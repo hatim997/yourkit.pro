@@ -19,6 +19,16 @@ class EcommerceAttribute extends Model
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 
+    public function sizeValue(): BelongsTo
+    {
+        return $this->belongsTo(AttributeValue::class, 'size_value_id');
+    }
+
+    public function colorValue(): BelongsTo
+    {
+        return $this->belongsTo(AttributeValue::class, 'color_value_id');
+    }
+
     public function images(): HasMany
     {
         return $this->hasMany(EcomAttributeImage::class, 'ecommerce_attribute_id', 'id');

@@ -55,7 +55,7 @@
                         <h2>ARTICLES</h2>
                         <ul class="prod-left-filter">
                           @foreach($subcategories as $cat)
-                          <li><a href="{{route('ecommerce.category',$cat->slug)}}">{{$cat->name}}</a></li>
+                          <li><a href="{{route('frontend.ecommerce.category',$cat->slug)}}">{{$cat->name}}</a></li>
                           @endforeach
                         </ul>
                     </div>
@@ -69,7 +69,7 @@
                             <div class="col-md-4">
                                 <div class="pro-bx" data-aos="flip-left" data-aos-duration="1000">
                                     <div class="pro-img">
-                                      
+
                                         <img class="img-fluid" src="{{ url('storage/'. $product->ecommerce()->first()->images()->first()->image) }}" alt="" />
                                     </div>
                                     <div class="prod-text">
@@ -77,7 +77,7 @@
                                         <p>${{ $product->ecommerce()->first()->price }}</p>
                                     </div>
                                     <div class="select-overlay">
-                                        <a href="{{ route('ecom.details', $product->productId) }}" class="btn btn-outline-warning">View More</a>
+                                        <a href="{{ route('frontend.ecom.details', $product->productId) }}" class="btn btn-outline-warning">View More</a>
                                     </div>
                                 </div>
                             </div>

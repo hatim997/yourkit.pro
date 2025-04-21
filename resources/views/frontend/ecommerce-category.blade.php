@@ -55,7 +55,7 @@
                         <h2>ARTICLES</h2>
                         <ul class="prod-left-filter">
                           @foreach($subcategories as $cat)
-                            <li><a href="{{route('ecommerce.category',$cat->slug)}}">{{$cat->name}}</a></li>
+                            <li><a href="{{route('frontend.ecommerce.category',$cat->slug)}}">{{$cat->name}}</a></li>
                             @endforeach
                             {{-- <li><a href="">Kangaroos</a></li>
                             <li><a href="">Caps</a></li>
@@ -83,7 +83,7 @@
                                               <p>${{ $product->ecommerce()->first()->price }}</p>
                                           </div>
                                           <div class="select-overlay">
-                                              <a href="{{ route('ecom.details', $product->productId) }}" class="btn btn-outline-warning">View More</a>
+                                              <a href="{{ route('frontend.ecom.details', $product->productId) }}" class="btn btn-outline-warning">View More</a>
                                           </div>
                                       </div>
                                   </div>
@@ -92,7 +92,7 @@
                       </div>
                   </div>
               </div>
-              
+
             </div>
         </div>
     </section>

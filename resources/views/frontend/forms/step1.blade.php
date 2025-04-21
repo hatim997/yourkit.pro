@@ -18,7 +18,7 @@
                                     alt="" id="pr_image_{{ $product->id }}">
                             </div>
                             <h4>{{ $product->pivot->quantity }} {{ $product->name }}</h4>
-                            @if ($product->sub_category_id == '1' || $product->sub_category_id == '2' )
+                            @if ($product->sub_category_id == '1' || $product->sub_category_id == '2')
                                 <p class="remaining-text" id="remaining-text-{{ $product->id }}" style="color: red;">
                                     {{ $product->pivot->quantity }} {{ $product->name }}s remaining to select
                                 </p>
@@ -35,9 +35,27 @@
                             <div class="filters-color">
                                 <label for="select-color">Select Color</label>
                                 <div class="color-selector">
-
                                     @isset($product->color)
-                                        @foreach ($product->color as $key2 => $color)
+                                        @php
+                                            // Sort product colors according to master order
+                                            $sortedColors = collect($product->color)
+                                                ->sortBy(function ($color) use ($allColors) {
+                                                    $index = array_search(
+                                                        strtolower($color->value),
+                                                        array_map('strtolower', $allColors),
+                                                    );
+                                                    return $index !== false ? $index : 999; // put unknown colors at end
+                                                })
+                                                ->values(); // reset keys
+                                        @endphp
+                                        {{-- @foreach ($product->color as $key2 => $color)
+                                            <div data-attrval="{{ $color->attr_id }}" data-color="{{ $color->value }}"
+                                                data-prid="{{ $product->id }}" data-key="{{ $key }}"
+                                                data-image="{{ !is_null($color->image) ? url(asset('storage/' . $color->image)) : url(asset('assets/frontend/images/t-shirt.png')) }}"
+                                                class="entry {{ $key2 == 0 ? 'active' : '' }}"
+                                                style="background: {{ $color->value }};">&nbsp;</div>
+                                        @endforeach --}}
+                                        @foreach ($sortedColors as $key2 => $color)
                                             <div data-attrval="{{ $color->attr_id }}" data-color="{{ $color->value }}"
                                                 data-prid="{{ $product->id }}" data-key="{{ $key }}"
                                                 data-image="{{ !is_null($color->image) ? url(asset('storage/' . $color->image)) : url(asset('assets/frontend/images/t-shirt.png')) }}"

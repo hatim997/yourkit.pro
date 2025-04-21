@@ -12,17 +12,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // \App\Models\User::factory(10)->create();
+
+        // \App\Models\User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+
         $this->call([
-            RoleTableSeeder::class
+            UserRolePermissionSeeder::class,
+            CountrySeeder::class,
+            LanguageSeeder::class,
+            GenderSeeder::class,
+            MaritalStatusSeeder::class,
+            DesignationSeeder::class,
+            TimezoneSeeder::class,
+            SettingSeeder::class,
         ]);
-
-        $user = \App\Models\User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@gmail.com',
-            'password' => '123456',
-            'phone' => '9830042699'
-        ]);
-
-        $user->assignRole('admin');
     }
 }

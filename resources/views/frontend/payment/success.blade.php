@@ -17,7 +17,7 @@
                 <div class="text-center">
                     <h1>Thank You !</h1>
                     <p>We got your payment</p>
-                    <a href="{{ route('home') }}" class="btn btn-outline-success">Back Home</a>
+                    <a href="{{ route('frontend.home') }}" class="btn btn-outline-success">Back Home</a>
                 </div>
             </div>
     </section>

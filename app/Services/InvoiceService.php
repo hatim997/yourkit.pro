@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
+use App\Helpers\Helper as HelpersHelper;
 use App\Models\Order;
 use App\Utils\Helper;
+use PDF;
 // use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Support\Facades\File;
-
-use PDF;
 class InvoiceService
 {
 
@@ -37,7 +37,7 @@ class InvoiceService
 
         try {
             $order->details = $order->details->groupBy('cart_id');
-            $currency_symbol = Helper::setting('currency-symbol') ?? '$';
+            $currency_symbol = HelpersHelper::getCurrencySymbol() ?? '$';
 
             $data = [
                 'order' => $order,

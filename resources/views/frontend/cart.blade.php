@@ -27,7 +27,7 @@
         <div class="container-xxl">
             <h3 class="mid-title">We need your logo to print it.</h3>
 
-            <form action="{{ route('cart.submit') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('frontend.cart.submit') }}" method="POST" enctype="multipart/form-data">
 
                 @csrf
 
@@ -71,7 +71,7 @@
 
                                 <button id="paymentBtn" class="btn btn-outline-warning mt-3" type="submit"><span class="text-uppercase">Proceed to payment</span>
                                     <i class="fa-solid fa-arrow-right"></i></button>
-                                    <button type="button" onclick="window.location.href='{{ route('home') }}'" class="btn btn-outline-warning mt-3">Continue Shopping</button>
+                                    <button type="button" onclick="window.location.href='{{ route('frontend.home') }}'" class="btn btn-outline-warning mt-3">Continue Shopping</button>
                             </div>
                         </div>
                     </div>
@@ -91,13 +91,13 @@
         /* Updating Cart*/
         function updateCart(id) {
             console.log('update', id)
-            let url = "{{ route('cart.edit', ['id' => ':id']) }}".replace(':id', id);
+            let url = "{{ route('frontend.cart.edit', ['id' => ':id']) }}".replace(':id', id);
             window.location.href = url;
         }
 
         function updateEcomCart(id) {
             console.log('update', id)
-            let url = "{{ route('ecom-cart.edit', ['id' => ':id']) }}".replace(':id', id);
+            let url = "{{ route('frontend.ecom-cart.edit', ['id' => ':id']) }}".replace(':id', id);
             window.location.href = url;
         }
 
@@ -107,7 +107,7 @@
         function deleteCart(id) {
             console.log(id);
 
-            let url = "{{ route('cart.delete', ['id' => ':id']) }}".replace(':id', id);
+            let url = "{{ route('frontend.cart.delete', ['id' => ':id']) }}".replace(':id', id);
 
             console.log('url ', url)
 
@@ -123,7 +123,7 @@
                             setTimeout(function () {
                                 location.reload();
                             }, 1000);
-                            
+
                         } else {
                             //alert(response.message);
                             toastr.error(response.message, 'Error');
@@ -148,7 +148,7 @@
             if (sessionId != null) {
                 $('#sessionId').val(sessionId);
 
-                let url = "{{ route('cart.all', ['sessionId' => ':sessionId']) }}".replace(':sessionId', sessionId);
+                let url = "{{ route('frontend.cart.all', ['sessionId' => ':sessionId']) }}".replace(':sessionId', sessionId);
 
                 $.ajax({
                     type: 'GET',

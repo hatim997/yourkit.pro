@@ -15,18 +15,18 @@ class Product extends Model
 
     protected $fillable = ['name', 'productId', 'description', 'no_of_stock', 'category_id', 'sub_category_id', 'slug', 'mrp', 'price', 'meta_title', 'meta_description', 'meta_keywords', 'status', 'product_type','size_chart'];
 
-    public static function boot()
-    {
-        parent::boot();
+    // public static function boot()
+    // {
+    //     parent::boot();
 
-        static::creating(function ($model) {
-            $model->slug = Str::slug($model->name);
-        });
+    //     static::creating(function ($model) {
+    //         $model->slug = Str::slug($model->name);
+    //     });
 
-        static::updating(function ($model) {
-            $model->slug = Str::slug($model->name);
-        });
-    }
+    //     static::updating(function ($model) {
+    //         $model->slug = Str::slug($model->name);
+    //     });
+    // }
 
     public function category(): BelongsTo
     {
@@ -40,7 +40,7 @@ class Product extends Model
 
     public function attributes(): BelongsToMany
     {
-        return $this->belongsToMany(Attributes::class, 'product_attributes', 'product_id', 'attribute_id')
+        return $this->belongsToMany(Attribute::class, 'product_attributes', 'product_id', 'attribute_id')
             ->withPivot('id', 'value', 'image', 'extra_cost');
     }
 

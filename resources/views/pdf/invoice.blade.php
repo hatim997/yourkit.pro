@@ -34,9 +34,9 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <div style="padding-right: 10px;width: 200px;">
+                                    <div style="padding-right: 10px; width: 200px;">
                                         <img src="{{ public_path('assets/frontend/images/logo.png') }}" alt=""
-                                            style="object-fit: contain;">
+                                            style="object-fit: contain;width: 200px !important;">
                                     </div>
                                 </td>
                                 <td colspan="2">

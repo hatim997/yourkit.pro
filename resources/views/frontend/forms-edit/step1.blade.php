@@ -30,13 +30,18 @@
                                             }
                                         }
                                     }
-                                   
+
                                 @endphp
                                 <img class="img-fluid"
                                     src="{{ $color->image ? url(asset('storage/' . $color->image)) : url(asset('assets/frontend/images/t-shirt.png')) }}"
                                     alt="" id="pr_image_{{ $product->id }}">
                             </div>
                             <h4>{{ $product->pivot->quantity }} {{ $product->name }}</h4>
+                            @if ($product->sub_category_id == '1' || $product->sub_category_id == '2')
+                                <p class="remaining-text" id="remaining-text-{{ $product->id }}" style="color: red;">
+                                    {{ $product->pivot->quantity }} {{ $product->name }}s remaining to select
+                                </p>
+                            @endif
 
                             <input type="hidden" class="printproducthid"
                                 data-productquantity="{{ $product->pivot->quantity }}"
@@ -108,7 +113,7 @@
                                             {{-- @php
 
                                         echo '<pre>'; print_r();die;
-                                            
+
                                         @endphp --}}
 
                                             <div class="form-group">
@@ -175,33 +180,6 @@
 
 @push('scripts')
     <script>
-        // $(document).ready(function() {
-
-        //     $('.color-selector .entry').on('click', function(e) {
-        //         e.preventDefault()
-        //         let image = $(this).data('image');
-        //         let rowKey = $(this).data('key');
-        //         let productId = $(this).data('prid');
-        //         let colorValue = $(this).data('color');
-
-        //         let colorAttrValue = $(this).data('attrval')
-
-        //         $('#pr_image_' + productId).attr('src', image);
-
-        //         $(`#color_${rowKey}`).val(colorValue);
-        //         $(`#color_attr_${rowKey}`).val(colorAttrValue);
-        //         console.log(rowKey);
-        //         console.log('Color:', colorValue);
-        //         console.log('Color Attribute ID:', colorAttrValue);
-        //         console.log('Image:', image);
-        //         $(this).removeClass('active');
-        //         $(this).addClass('active');
-
-
-        //     });
-
-        // })
-
         $(document).ready(function() {
             $('.color-selector .entry').on('click', function(e) {
                 e.preventDefault();
@@ -230,6 +208,60 @@
                 console.log('Color Attribute ID:', colorAttrValue);
                 console.log('Image:', image);
             });
+
+            $('.productquant-{{ $product->id }}').on('change', function() {
+                updateRemaining($(this).data('productid'));
+            });
+
+            function updateRemaining(productId) {
+                let total = parseInt($(`.printproducthid[data-productquantity][value="${productId}"]`).data(
+                    'productquantity'));
+                let selectedTotal = 0;
+
+                $(`.productquant-${productId}`).each(function() {
+                    selectedTotal += parseInt($(this).val());
+                });
+
+                let remaining = total - selectedTotal;
+                let $remainingText = $(`#remaining-text-${productId}`);
+
+                if (remaining <= 0) {
+                    remaining = 0;
+                    $remainingText.css('color', 'green');
+                } else {
+                    $remainingText.css('color', 'red');
+                }
+
+                $remainingText.text(`${remaining} T-shirts remaining to select`);
+
+                // Update max options in selects
+                $(`.productquant-${productId}`).each(function() {
+                    let currentVal = parseInt($(this).val());
+                    let $select = $(this);
+                    let selectedSize = $select.data('size');
+
+                    $select.empty();
+                    for (let i = 0; i <= remaining + currentVal; i++) {
+                        $select.append(
+                            `<option value="${i}" ${i === currentVal ? 'selected' : ''}>${i}</option>`);
+                    }
+                });
+            }
+
+            // Bind initial change events
+            @foreach ($bundle->products as $product)
+                @if (!$product->size->isEmpty())
+                    $('.productquant-{{ $product->id }}').on('change', function() {
+                        updateRemaining({{ $product->id }});
+                    });
+                @endif
+            @endforeach
+            // Initialize remaining count on page load
+            @foreach ($bundle->products as $product)
+                @if (!$product->size->isEmpty())
+                    updateRemaining({{ $product->id }});
+                @endif
+            @endforeach
         });
     </script>
 @endpush

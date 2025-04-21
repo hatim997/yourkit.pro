@@ -17,6 +17,10 @@ class Bundle extends Model
     {
         return $this->belongsToMany(Product::class, 'product_bundles', 'bundle_id', 'product_id')->withPivot('quantity');
     }
+    public function bundleProducts()
+    {
+        return $this->hasMany(ProductBundle::class, 'bundle_id');
+    }
 
     public function cart(): HasOne
     {

@@ -350,7 +350,7 @@ class CartRepository extends BaseRepository
             'currency_symbol' => Helper::setting('currency-symbol') ?? '$',
             'total' => $total,
             'sessionId' => $data['sessionId'],
-            'returnURL' => route('checkout.index')
+            'returnURL' => route('frontend.checkout.index')
         ];
 
         session(['cartData' => $sessionData]);

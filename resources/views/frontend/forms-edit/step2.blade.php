@@ -4,7 +4,7 @@
             <h2>STEP 2</h2>
             <p class="text-uppercase">Select the placement of you logo.</p>
             <div class=" mt-4">
-                <p> 1 print included per garment, {{ Helper::setting('currency-symbol') ?? '$' }}3 charge for each additional print.</p>
+                <p> 1 print included per garment, {{ \App\Helpers\Helper::formatCurrency(3) }} charge for each additional print.</p>
             </div>
         </div>
         @foreach ($subcategories as $sub => $subcategory)
@@ -45,7 +45,7 @@
 
                                     if(isset($cartPositions)){
                                         foreach ($cartPositions as $keyPos => $valuePos) {
- 
+
                                         foreach ($valuePos as $value) {
                                             $positionArray[] = $value;
                                         }
@@ -83,13 +83,13 @@
 
                     </ul>
                 </div>
-                
+
             @endforeach
             <input type="hidden" name="position_count[{{ $subcategory->id }}]" value="0"
                 id="position_count_{{ $subcategory->slug }}">
         </div>
             @endforeach
-        
+
     </div>
 </div>
 
@@ -176,7 +176,7 @@
             let name = $(this).data("type");
             let positionCountId = `#position_count_${name}`;
             let currentCount = parseInt($(positionCountId).val()) || 0;
-            
+
             // Increase count only if not already considered
             if (!imageObject[name]) {
                 imageObject[name] = [];
@@ -221,7 +221,7 @@
         }
 
         let countCheckedCheckboxes = $(".image-checkbox:checked").length;
-                
+
         if(countCheckedCheckboxes == 2){
             msgpopupflag = 1;
             Swal.fire({
@@ -287,11 +287,11 @@
             });
         });
     </script>
-    
+
         <script>
 $(document).on('change', '.image-checkbox', function() {
-                    
-    let subcategorySlug = $(this).data('type'); 
+
+    let subcategorySlug = $(this).data('type');
    //alert(subcategorySlug)
     let countCheckedCheckboxes = $(
        `.image-checkbox[data-type="${subcategorySlug}"]:checked`).length;

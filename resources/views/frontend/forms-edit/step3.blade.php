@@ -17,7 +17,7 @@
                 <div class="form-check">
                     <input class="form-check-input CheckDoc" type="checkbox" id="add_number" name="is_phone_checked" {{ $cart->is_phone_checked == 1 ? 'checked' : '' }}>
                     <label class="form-check-label" for="flexCheckDefault">
-                        ADD THE PHONE NUMBER ON THE BACK - {{ Helper::setting('currency-symbol') ?? '$' }}2 PER GARMENT
+                        ADD THE PHONE NUMBER ON THE BACK - {{ \App\Helpers\Helper::formatCurrency(2) }} PER GARMENT
                     </label>
                 </div>
                 <div id="numberPlacementOptions" class="mt-3" style="display: none;">
@@ -43,7 +43,7 @@
                 <div class="form-check">
                     <input class="form-check-input CheckDoc" type="checkbox" id="add_email" name="is_email_checked" {{ $cart->is_email_checked == 1 ? 'checked' : '' }}>
                     <label class="form-check-label" for="flexCheckDefault">
-                        ADD THE EMAIL ON THE BACK - {{ Helper::setting('currency-symbol') ?? '$' }}2 PER GARMENT
+                        ADD THE EMAIL ON THE BACK - {{ \App\Helpers\Helper::formatCurrency(2) }} PER GARMENT
                     </label>
                 </div>
                 <div id="emailPlacementOptions" class="mt-3" style="display: none;">
@@ -73,7 +73,7 @@
         </div>
     </div>
     {{-- <div class=" mt-4">
-        <p>{{ Helper::setting('currency-symbol') ?? '$' }} 2, will be charge for adding both email and mobile no</p>
+        <p>{{ \App\Helpers\Helper::formatCurrency(2) }} , will be charge for adding both email and mobile no</p>
     </div> --}}
 </div>
 

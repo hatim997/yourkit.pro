@@ -1,6 +1,6 @@
-@php
+{{-- @php
      $settings = \DB::table('settings')->pluck('value', 'setting_name');
-@endphp
+@endphp --}}
 <!doctype html>
 <html lang="en">
 
@@ -12,8 +12,8 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Bootstrap CSS -->
-   
-   <link rel="icon" type="image/x-icon" href="{{ url('storage/' . (Helper::setting('favicon') ?? '')) }}">
+
+   <link rel="icon" type="image/x-icon" href="{{ asset(\App\Helpers\Helper::getFavicon())}}">
     <link rel="stylesheet" href="{{ url(asset('assets/frontend/css/bootstrap.min.css')) }}">
     <link rel="stylesheet" href="{{ url(asset('assets/frontend/css/owl.carousel.2.3.4.css')) }}">
     <link rel="stylesheet" href="{{ url(asset('assets/frontend/css/aos.2.3.1.css')) }}">
@@ -28,13 +28,13 @@
         href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 
 
-    <title>{{ Helper::setting('title') ?? '' }}</title>
+    <title>{{ \App\Helpers\Helper::getCompanyName()}}</title>
 
     {{-- Toastr Assets --}}
     <link rel="stylesheet" href="{{ url(asset('assets/frontend/css/toastr.min.css?v='.\App\Utils\Helper::getCssVersion())) }}">
     <script src="{{ url(asset('assets/frontend/js/toastr_jquery.min.js?v='.\App\Utils\Helper::getCssVersion())) }}"></script>
     <script src="{{ url(asset('assets/frontend/js/toastr.min.js?v='.\App\Utils\Helper::getCssVersion())) }}"></script>
-  
+
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VTR94KBZJN"></script>
 <script>
@@ -44,8 +44,8 @@
 
   gtag('config', 'G-VTR94KBZJN');
 </script>
-  
-  
+
+
 </head>
 
 <body>
@@ -53,21 +53,21 @@
         <div id="google_translate_element"></div>
         <div class="container-xxl">
             <nav class="navbar navbar-expand-lg navbar-light">
-                <a class="navbar-brand" href="{{ route('home') }}">
-                    <img class="img-fluid" src="{{ url('storage/' . (Helper::setting('logo') ?? '')) }}" alt="">
+                <a class="navbar-brand" href="{{ route('frontend.home') }}">
+                    <img class="img-fluid" src="{{ asset(\App\Helpers\Helper::getLogoLight()) }}" alt="">
                 </a>
 
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul class="navbar-nav">
-                        <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}"><a class="nav-link"
-                                href="{{ route('home') }}">Home</a></li>
-                        <li class="nav-item {{ request()->routeIs('product') ? 'active' : '' }}"><a class="nav-link"
-                                href="{{ route('product') }}">Products</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('ecommerce') }}">What’s New</a></li>
-                        <li class="nav-item {{ request()->routeIs('faq') ? 'active' : '' }}"><a class="nav-link"
-                                href="{{ route('faq') }}">FAQ</a></li>
-                        <li class="nav-item {{ request()->routeIs('contact') ? 'active' : '' }}"><a class="nav-link"
-                                href="{{ route('contact') }}">CONTACT US</a></li>
+                        <li class="nav-item {{ request()->routeIs('frontend.home') ? 'active' : '' }}"><a class="nav-link"
+                                href="{{ route('frontend.home') }}">Home</a></li>
+                        <li class="nav-item {{ request()->routeIs('frontend.product') ? 'active' : '' }}"><a class="nav-link"
+                                href="{{ route('frontend.product') }}">Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('frontend.ecommerce') }}">What’s New</a></li>
+                        <li class="nav-item {{ request()->routeIs('frontend.faq') ? 'active' : '' }}"><a class="nav-link"
+                                href="{{ route('frontend.faq') }}">FAQ</a></li>
+                        <li class="nav-item {{ request()->routeIs('frontend.contact') ? 'active' : '' }}"><a class="nav-link"
+                                href="{{ route('frontend.contact') }}">CONTACT US</a></li>
                     </ul>
                 </div>
 
@@ -91,11 +91,11 @@
 
                             @if (Auth::check())
                                 <div class="user-ac">
-                                    <a href="{{ route('dashboard') }}"><i class="bi bi-person"></i><p>{{ Auth::user()->name }}</p></a>
+                                    <a href="{{ route('frontend.dashboard') }}"><i class="bi bi-person"></i><p>{{ Auth::user()->name }}</p></a>
                                 </div>
                             @else
                                 <div class="user-ac">
-                                    <a href="{{ route('signin') }}"><i class="bi bi-person"></i></a>
+                                    <a href="{{ route('frontend.signin') }}"><i class="bi bi-person"></i></a>
                                 </div>
                             @endif
 
@@ -103,7 +103,7 @@
                         </li>
                         <li>
                             <div class="cart">
-                                <a href="{{ route('cart') }}">
+                                <a href="{{ route('frontend.cart') }}">
                                     <i class="bi bi-bag"></i>
                                     <span class="count" id="cartCount"></span>
                                 </a>
@@ -125,10 +125,10 @@
                       <li><a class="dropdown-item" href="#">Something else here</a></li>
                     </ul>
                 </div> --}}
-               
+
             </nav>
-            
-            
+
+
         </div>
     </header>
 
@@ -137,12 +137,36 @@
     @if (!Request::is('/'))
         @include('frontend.includes.header')
     @endif
-    
-    {!!Toastr::message() !!}
+
+    {{-- {!!Toastr::message() !!} --}}
+
     @yield('content')
 
     @include('frontend.includes.footer')
 <a href="javascript:void(0)" id="BackToTop-btn"></a>
+@yield('script')
+<script>
+    @if(session('error'))
+        toastr.error("{{ session('error') }}", "Error", {
+            "closeButton": true,
+            "progressBar": true
+        });
+    @endif
+
+    @if(session('success'))
+        toastr.success("{{ session('success') }}", "Success", {
+            "closeButton": true,
+            "progressBar": true
+        });
+    @endif
+
+    @if(session('message'))
+        toastr.info("{{ session('message') }}", "Info", {
+            "closeButton": true,
+            "progressBar": true
+        });
+    @endif
+</script>
 <script>
 $(document).ready(function() {
     var btn = $("#BackToTop-btn");
@@ -176,13 +200,13 @@ $(document).ready(function() {
     <script src="{{ url(asset('assets/frontend/js/jquery.smartWizard.min.js')) }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    
+
     <script src="{{ url(asset('assets/frontend/js/main.js?v='.\App\Utils\Helper::getCssVersion())) }}"></script>
     <style>
         body  {
-        top: 0px !important; 
+        top: 0px !important;
         }
-        
+
     </style>
     <script type="text/javascript">
         function googleTranslateElementInit() {
@@ -195,10 +219,10 @@ $(document).ready(function() {
                 }, 'google_translate_element');
 
         }
-        
+
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    
+
     @stack('scripts')
     <!-- Loader -->
     <div id="preloader">
@@ -210,7 +234,7 @@ $(document).ready(function() {
     </div>
     <script>
         function fetchData(sessionId) {
-            let url = "{{ route('cart.count') }}";
+            let url = "{{ route('frontend.cart.count') }}";
 
             $.ajax({
                 url: url,

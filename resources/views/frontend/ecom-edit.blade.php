@@ -7,24 +7,24 @@
     <section class="main-wrap">
         <div class="container">
             <div class="row">
-                
-                
+
+
                 <div class="col-lg-5 col-md-12 col-sm-12">
                     <div class="product-details-slider">
 
                         <div class="product-big-img">
                             <div class="product-big-slider" id="product-big-slider">
-                               
+
 
                             </div>
                         </div>
                         <div class="product-details-thumbnail">
                             <div class="product-thumbnail-slider" id="product-thumbnail-slider">
-                              
+
                             </div>
                         </div>
                     </div>
-                   
+
                 </div>
                 <div class="col-lg-7 col-md-12 col-sm-12">
                     <form id="addCart">
@@ -133,7 +133,7 @@
                                     data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
                                         <div class="service-dtl-info">
-                                           
+
                                             <p>{!! $product->description !!}</p>
                                         </div>
                                     </div>
@@ -165,11 +165,11 @@
                             @endforeach
                             <p>[If you want change images upload again]</p>
                             <input type="hidden" name="has_existing_images" value="1">
-                            @else 
+                            @else
                              <input type="hidden" name="has_existing_images" value="0">
                         @endif
                             <input type="file" name="cart_image[]" class="form-control" id="cartImage" multiple>
-                           
+
                             <label for="note" class="form-label">Note </label>
                             <textarea class="form-control" name="note" id="note" cols="30" rows="2"
                                 placeholder="Please specify the positioning of the logo print."> {{trim($attr->note) ??''}}</textarea>
@@ -212,7 +212,7 @@
             }
             return result;
         }
-      
+
         $(document).ready(function() {
 
             let quqantity = "{{ $attr->quantity ?? 1 }}";
@@ -237,7 +237,7 @@
                 formData.append('sessionId', sessionId)
                 formData.append('quantity', quqantity)
 
-                let url = '{{ route('ecom-cart.update', $cart->id) }}';
+                let url = '{{ route('frontend.ecom-cart.update', $cart->id) }}';
 
                 $.ajaxSetup({
                     headers: {
@@ -256,13 +256,13 @@
                         console.log(response)
 
 
-                   
+
                             if (response.status) {
                                 localStorage.setItem('sessionId', JSON.stringify(response
                                     .data));
-                                window.location.href = "{{ route('cart') }}";
+                                window.location.href = "{{ route('frontend.cart') }}";
                             }else{
-                      
+
                            toastr.error(response.message, 'Error');
                        }
                     },
@@ -289,10 +289,10 @@
         });
 
 
-        
+
     </script>
 
- 
+
     <Script>
         document.addEventListener('DOMContentLoaded', () => {
     let selectedColor = null;
@@ -301,13 +301,13 @@
     let currentSelectedSize = null;
 
     const productId = document.querySelector('input[name="product_id"]').value;
-    const fetchAttributesUrl = "{{ route('fetch.ecom.attr') }}";
+    const fetchAttributesUrl = "{{ route('frontend.fetch.ecom.attr') }}";
 
-   
+
     const storedColor = "{{$attr->color}}";
     const storedSize = "{{$attr->size}}";
 
-   
+
     const firstColorElement = document.querySelector(`.colors[data-color="${storedColor}"]`);
     const firstSizeElement = document.querySelector(`.sizes[data-size="${storedSize}"]`);
 
@@ -431,7 +431,7 @@
     //         });
     //     }
     // }
-    
+
      function fetchUpdatedAttributes() {
     if (selectedColor && selectedSize) {
         fetch(fetchAttributesUrl, {
@@ -469,7 +469,7 @@
                 data.images.forEach((image, index) => {
     let relativeImage = image.replace(/^.*\/storage\//, ''); // Remove base URL
     imgHtml += `<div class="big-sld-items"><img class="img-fluid" src="/storage/${relativeImage}" alt=""></div>`;
-    
+
     if (index === 0) {
         firstImage = relativeImage; // Capture the first image as a relative path
     }

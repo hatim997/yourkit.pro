@@ -2,10 +2,6 @@
 
 namespace App\Providers;
 
-use App\Events\SendInvoiceEmailEvent;
-use App\Events\SendInvoiceEmailAdminEvent;
-use App\Listeners\SendInvoiceEmailAdminListener;
-use App\Listeners\SendInvoiceEmailListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -21,13 +17,6 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
-        ],
-
-        SendInvoiceEmailEvent::class => [
-            SendInvoiceEmailListener::class,
-        ],
-         SendInvoiceEmailAdminEvent::class => [
-            SendInvoiceEmailAdminListener::class,
         ],
     ];
 

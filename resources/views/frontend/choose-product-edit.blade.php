@@ -26,7 +26,7 @@
                     </div>
 
                     <div class="stpBtn">
-                        <a href="{{ route('product') }}" class="btn btn-outline-warning">Back</a>
+                        <a href="{{ route('frontend.product') }}" class="btn btn-outline-warning">Back</a>
                         <button type="button" class="btn btn-outline-warning  next-step">Next</button>
                     </div>
 
@@ -95,7 +95,7 @@
             $('#multi-step-form').on('submit', function(e) {
                 e.preventDefault();
 
-                let url = '{{ route('product.store') }}';
+                let url = '{{ route('frontend.product.store') }}';
 
                 $.ajaxSetup({
                     headers: {
@@ -113,7 +113,7 @@
 
                             if(response.status){
                                 localStorage.setItem('sessionId', JSON.stringify(response.data));
-                                window.location.href = "{{ route('cart') }}";
+                                window.location.href = "{{ route('frontend.cart') }}";
                             }
                         } catch (e) {
                             console.error('Failed to store cart data in localStorage:', e);

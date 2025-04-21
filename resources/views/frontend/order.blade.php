@@ -1,9 +1,7 @@
 @extends('frontend.layouts')
 
 @section('title', 'Dashboard')
-
 @section('content')
-
 
     <section class="main-wrap">
         <div class="container-xxl">
@@ -57,7 +55,7 @@
                                                 <td>
                                                     <div class='d-flex justify-content-center align-items-center'>
 
-                                                        <a href="{{ route('order.detail', $order->id) }}">
+                                                        <a href="{{ route('frontend.order.detail', $order->id) }}">
                                                             <i class="fa fa-eye"></i>
                                                         </a>
                                                     </div>

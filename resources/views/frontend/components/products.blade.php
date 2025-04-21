@@ -46,7 +46,7 @@
                     <!--<div class="pro-bx" style="height: 470px" data-aos="flip-left" data-aos-duration="1000">-->
                     <div class="pro-bx" style="height: 470px" data-aos-duration="1000">
                         <div class="price-tag">
-                            <h5><span>Starting at</span> {{ (Helper::setting('currency-symbol') ?? '$') . $bundle->price ?? 0.0 }}</h5>
+                            <h5><span>Starting at</span> {{ App\Helpers\Helper::formatCurrency($bundle->price) }}</h5>
                         </div>
                         <div class="pro-img">
                             @if(is_file(public_path('storage/'.$bundle->image)))
@@ -66,7 +66,7 @@
                             @endforelse
                         </ul>
                         <div class="select-overlay">
-                            <a href="{{ route('product.page', ['meta' => $bundle->uuid]) }}" class="btn btn-outline-warning">Select <i
+                            <a href="{{ route('frontend.product.page', ['meta' => $bundle->uuid]) }}" class="btn btn-outline-warning">Select <i
                                     class="fa-solid fa-arrow-right"></i></a>
                         </div>
                     </div>
@@ -78,10 +78,10 @@
 
         </div>
 
-        @if (request()->routeIs('home'))
+        @if (request()->routeIs('frontend.home'))
 
         <div class="text-center mt-4">
-            <a href="{{ route('product') }}" class="btn btn-outline-warning">View All <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="{{ route('frontend.product') }}" class="btn btn-outline-warning">View All <i class="fa-solid fa-arrow-right"></i></a>
         </div>
 
         @endif

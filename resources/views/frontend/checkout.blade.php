@@ -56,7 +56,7 @@
                 </div>
             </div> --}}
 
-            <form action="{{ route('checkout.store') }}" method="POST" id="checkoutForm">
+            <form action="{{ route('frontend.checkout.store') }}" method="POST" id="checkoutForm">
                 @csrf
 
                 <div class="row mt-4">
@@ -140,7 +140,7 @@
                                 <div class="mt-1 mb-1">
                                     <p style="color: #ff8b00">Note: Shipping cost will be charged separately once the order is ready</p>
                                 </div>
-                                
+
                                 <h3>Choose one as per your need</h3>
 
                                 <div class="form-check col-md-6">
@@ -327,7 +327,7 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    
+
                                     @error('shipping_country')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror

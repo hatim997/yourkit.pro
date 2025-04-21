@@ -12,7 +12,7 @@ class NewsletterSubscriber extends Model
     protected $fillable = [
         'email',
         'token',
-        
+
         'status',
     ];
 }

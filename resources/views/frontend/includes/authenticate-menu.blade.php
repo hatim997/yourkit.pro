@@ -3,9 +3,9 @@
         <div class="lft-profile-top">
             <div class="profileImg">
                 <span>
-                    <img id="previewImage" src="{{ url('storage/'.Auth::user()->image ?? 'assets/frontend/images/profile1.jpg') }}" alt="Profile Image">
+                    <img id="previewImage" src="{{ isset(Auth::user()->image) ? url('storage/'.Auth::user()->image) : asset('assets/img/default/user.png') }}" alt="Profile Image">
                     <label for="userPic">
-                        <input type="file" name="" id="userPic" hidden="">
+                        <input type="file" name="" id="userPic" hidden="" accept="image/*">
                         <i class="fa-solid fa-pen"></i>
                     </label>
                 </span>
@@ -15,10 +15,10 @@
 
         <div class="dashboard-list">
             <ul>
-                <li  class="{{ Route::is('dashboard') ? 'active' : '' }}"><a href="{{route('dashboard')}}"><i class="fa fa-user"></i> My Info</a></li>
-                <li class="{{ Route::is('order.view') ? 'active' : '' }}"><a href="{{route('order.view')}}"><i class="fa fa-list-alt"></i> My Order</a></li>
+                <li  class="{{ Route::is('frontend.dashboard') ? 'active' : '' }}"><a href="{{route('frontend.dashboard')}}"><i class="fa fa-user"></i> My Info</a></li>
+                <li class="{{ Route::is('frontend.order.view') ? 'active' : '' }}"><a href="{{route('frontend.order.view')}}"><i class="fa fa-list-alt"></i> My Order</a></li>
                 {{-- <li><a href="wishlist.html"><i class="fa fa-list-alt"></i> Wishlist</a></li> --}}
-                <li><a href="{{ route('logout') }}"><i class="fa-solid fa-power-off"></i> Log Out</a></li>
+                <li><a href="{{ route('frontend.logout') }}"><i class="fa-solid fa-power-off"></i> Log Out</a></li>
             </ul>
         </div>
     </div>
@@ -33,16 +33,16 @@
                 formData.append('image', file);
                 formData.append('_token', '{{ csrf_token() }}');
 
-              
+
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     $('#previewImage').attr('src', e.target.result);
                 };
                 reader.readAsDataURL(file);
 
-                
+
                 $.ajax({
-                    url: "{{ route('upload.image') }}", 
+                    url: "{{ route('frontend.upload.image') }}",
                     type: "POST",
                     data: formData,
                     processData: false,

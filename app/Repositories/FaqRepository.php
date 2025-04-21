@@ -10,6 +10,11 @@ Class FaqRepository extends BaseRepository {
         parent::__construct($model);
     }
 
+    public function getFaqsWithStatus()
+    {
+        return $this->model->where('status', '1')->get()->sortBy('created_at');
+    }
+
 }
 
 

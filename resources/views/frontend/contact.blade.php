@@ -10,37 +10,72 @@
             <div class="row">
                 <div class="col-md-7">
                     <h2 class="contact-title" data-aos="fade-up" data-aos-duration="2000"><span>Send Us A</span> Message</h2>
-                    <form class="rd-mailform" method="POST" action="{{route('contact.post')}}">
+                    <form class="rd-mailform" method="POST" action="{{ route('frontend.contact.post') }}" id="contactForm">
                         @csrf
                         <div class="row">
+                            {{-- Name --}}
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label class="form-label">Your name</label>
-                                    <input class="form-control" type="text" name="name" value="{{old('name')}}"/>
+                                    <input class="form-control @error('name') is-invalid @enderror" type="text" name="name" value="{{ old('name') }}"/>
+                                    @error('name')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
+
+                            {{-- Phone --}}
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label class="form-label">Your phone</label>
-                                    <input class="form-control" type="text" name="phone" value="{{old('phone')}}"/>
+                                    <input class="form-control @error('phone') is-invalid @enderror" type="text" name="phone" value="{{ old('phone') }}"/>
+                                    @error('phone')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
+
+                            {{-- Email --}}
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="form-label">Your e-mail</label>
-                                    <input class="form-control" type="email" name="email" value="{{old('email')}}"/>
+                                    <input class="form-control @error('email') is-invalid @enderror" type="email" name="email" value="{{ old('email') }}"/>
+                                    @error('email')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
+
+                            {{-- Message --}}
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="form-label">Message</label>
-                                    <textarea class="form-control" name="message">{{old('name')}}</textarea>
+                                    <textarea class="form-control @error('message') is-invalid @enderror" name="message">{{ old('message') }}</textarea>
+                                    @error('message')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
+
+                            <div class="col-md-12 my-8">
+                                @if(config('captcha.version') === 'v3')
+                                    {!! \App\Helpers\Helper::renderRecaptcha('contactForm', 'register') !!}
+                                @elseif(config('captcha.version') === 'v2')
+                                    <div class="form-field-block">
+                                        {!! app('captcha')->display() !!}
+                                        @if ($errors->has('g-recaptcha-response'))
+                                            <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
                         </div>
-                        <button class="btn btn-outline-warning mt-3" type="submit"><span>Send message</span> <i
-                                class="fa-solid fa-arrow-right"></i></button>
+
+                        <button class="btn btn-outline-warning mt-3" type="submit">
+                            <span>Send message</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
                     </form>
+
                 </div>
                 <div class="col-md-5">
                     <div class="map-box">
@@ -51,4 +86,8 @@
         </div>
     </section>
 
+@endsection
+
+@section('script')
+    {!! NoCaptcha::renderJs() !!}
 @endsection

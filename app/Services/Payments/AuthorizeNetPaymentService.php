@@ -2,6 +2,7 @@
 
 namespace App\Services\Payments;
 
+use App\Helpers\Helper as HelpersHelper;
 use App\Utils\Helper;
 use net\authorize\api\contract\v1 as AnetAPI;
 use net\authorize\api\controller as AnetController;
@@ -18,7 +19,7 @@ class AuthorizeNetPaymentService implements PaymentGatewayInterface
     {
         // Set up API credentials
         $this->merchantAuthentication = new AnetAPI\MerchantAuthenticationType();
-        if(Helper::setting("payment_mode") == AuthorizeNetPaymentService::PAYMENT_MODE_PRODUCTION)
+        if(HelpersHelper::getPaymentMode() == AuthorizeNetPaymentService::PAYMENT_MODE_PRODUCTION)
         {
             $this->merchantAuthentication->setName(env('AUTHORIZE_NET_PRODUCTION_API_LOGIN_ID'));
             $this->merchantAuthentication->setTransactionKey(env('AUTHORIZE_NET_PRODUCTION_TRANSACTION_KEY'));
@@ -28,7 +29,7 @@ class AuthorizeNetPaymentService implements PaymentGatewayInterface
             $this->merchantAuthentication->setName(env('AUTHORIZE_NET_SANDBOX_API_LOGIN_ID'));
             $this->merchantAuthentication->setTransactionKey(env('AUTHORIZE_NET_SANDBOX_TRANSACTION_KEY'));
         }
-        
+
     }
 
     public function createPayment($paymentData)
@@ -56,14 +57,14 @@ class AuthorizeNetPaymentService implements PaymentGatewayInterface
         $controller = new AnetController\CreateTransactionController($request);
         $response = $controller->executeWithApiResponse(
             // env('AUTHORIZE_NET_ENVIRONMENT') == 'sandbox' ? \net\authorize\api\constants\ANetEnvironment::SANDBOX : \net\authorize\api\constants\ANetEnvironment::PRODUCTION
-            Helper::setting("payment_mode") == AuthorizeNetPaymentService::PAYMENT_MODE_SANDBOX ? \net\authorize\api\constants\ANetEnvironment::SANDBOX : \net\authorize\api\constants\ANetEnvironment::PRODUCTION
+            HelpersHelper::getPaymentMode() == AuthorizeNetPaymentService::PAYMENT_MODE_SANDBOX ? \net\authorize\api\constants\ANetEnvironment::SANDBOX : \net\authorize\api\constants\ANetEnvironment::PRODUCTION
         );
-        
+
         // Handle the response
         if ($response != null) {
             // dd($response);
             $tresponse = $response->getTransactionResponse(); // If $response is not null then getTransactionResponse() will neverf null
-            if(!empty($tresponse) && $tresponse->getResponseCode() != null) 
+            if(!empty($tresponse) && $tresponse->getResponseCode() != null)
             {
                 // responseCode - type -->String.
 
@@ -91,7 +92,7 @@ class AuthorizeNetPaymentService implements PaymentGatewayInterface
                     throw new \Exception("Payment error : ".$tresponse->getErrors()[0]->getErrorText());
                 }
                 else if($tresponse->getResponseCode() == "4"){
-                    
+
                     return [
                         'status' => "hold",
                         'message' => 'Payment hold: Held for Review ',

@@ -10,44 +10,44 @@
           </form>
         </div>
       </div>
-@php
+{{-- @php
      $settings = \DB::table('settings')->pluck('value', 'setting_name');
-@endphp
+@endphp --}}
       <div class="row mt-5">
         <div class="col-md-4">
           <div class="f-logo">
-             <img class="img-fluid" src="{{ url('storage/' . (Helper::setting('logo') ?? '')) }}" alt="">
+             <img class="img-fluid" src="{{ asset(\App\Helpers\Helper::getLogoLight()) }}" alt="">
           </div>
-          <p class="copyright mt-5 d-none d-sm-block">{!! Helper::setting('footer-text') ?? '' !!}</p>
-          
+          <p class="copyright mt-5 d-none d-sm-block">{!! \App\Helpers\Helper::getfooterText() !!}</p>
+
         </div>
         <div class="col-md-2">
           <ul class="footer-menu-list">
-            <li><a href="{{ route('home') }}">Home</a></li>
-            <li><a href="{{ route('product') }}">Products</a></li>
+            <li><a href="{{ route('frontend.home') }}">Home</a></li>
+            <li><a href="{{ route('frontend.product') }}">Products</a></li>
             <li><a href="#">What’s New</a></li>
-            <li><a href="{{ route('faq') }}">FAQ</a></li>
-            <li><a href="{{ route('contact') }}">CONTACT US</a></li>
-            
+            <li><a href="{{ route('frontend.faq') }}">FAQ</a></li>
+            <li><a href="{{ route('frontend.contact') }}">CONTACT US</a></li>
+
           </ul>
         </div>
         <div class="col-md-3">
           <ul class="contact-lst">
-            <li><a href="tel:15145618019"><strong>Tel:</strong>{{ $settings['site_phone'] ?? '+15145618019' }}</a></li>
-            <li><a href="mailto:sales@yourkit.pro"><strong>Email:</strong>{{ $settings['site_email'] ?? 'sales@yourkit.pro' }}</a></li>
-            <li><a href="{{ route('terms') }}">Terms of Sale</a></li>
-            <li><a href="{{ route('privacy') }}">Privacy Policy</a></li>
-            <li><a href="{{ route('return') }}">Return Policy</a></li>
-            <li><a href="{{ route('delivery.info') }}">Delivery Information</a></li>
+            <li><a href="tel:15145618019"><strong>Tel: </strong>{{ \App\Helpers\Helper::sitePhone() }}</a></li>
+            <li><a href="mailto:sales@yourkit.pro"><strong>Email: </strong>{{ \App\Helpers\Helper::siteEmail() }}</a></li>
+            <li><a href="{{ route('frontend.terms') }}">Terms of Sale</a></li>
+            <li><a href="{{ route('frontend.privacy') }}">Privacy Policy</a></li>
+            <li><a href="{{ route('frontend.return') }}">Return Policy</a></li>
+            <li><a href="{{ route('frontend.delivery.info') }}">Delivery Information</a></li>
           </ul>
         </div>
         <div class="col-md-3">
           <ul class="f-social">
-            <li><a href="{{ $settings['facebook'] }}" target="_blank"><i class="fa-brands fa-facebook-f"></i></a></li>
-            <li><a href="{{ $settings['twitter'] }}" target="_blank"><i class="fa-brands fa-twitter"></i></a></li>
-            <li><a href="{{ $settings['linkedin'] }}" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li>
+            <li><a href="{{ \App\Helpers\Helper::facebook() }}" target="_blank"><i class="fa-brands fa-facebook-f"></i></a></li>
+            <li><a href="{{ \App\Helpers\Helper::twitter() }}" target="_blank"><i class="fa-brands fa-twitter"></i></a></li>
+            <li><a href="{{ \App\Helpers\Helper::linkedin() }}" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li>
           </ul>
-          <p class="copyright mt-3 d-block d-sm-none">yourkit.pro powered by WebOrka Inc.</p>
+          {{-- <p class="copyright mt-3 d-block d-sm-none">yourkit.pro powered by WebOrka Inc.</p> --}}
         </div>
       </div>
     </div>
@@ -66,7 +66,7 @@
 
 
             $.ajax({
-                url: "{{ route('send.newslettermail') }}",
+                url: "{{ route('frontend.send.newslettermail') }}",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },

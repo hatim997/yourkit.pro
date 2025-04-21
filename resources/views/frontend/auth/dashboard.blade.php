@@ -14,7 +14,7 @@
                     <div class="rt-sec">
                         <div class="details-hdr">
                             <h2>Personal Info</h2>
-                            <a href="{{ route('profile.edit') }}" class="btn btn-outline-warning">Edit</a>
+                            <a href="{{ route('frontend.profile.edit') }}" class="btn btn-outline-warning">Edit</a>
                         </div>
 
                         <div class="row">
@@ -22,13 +22,13 @@
                                 <h4>*First Name <span>{{ $user->name ??''}}</span></h4>
                             </div>
                             <div class="custom-fld col-sm-6">
-                                <h4>*Date of birth <span>{{ $user->profile->dob ??'' }}</span></h4>
+                                <h4>*Date of birth <span>{{ $user->userDetail->dob ??'' }}</span></h4>
                             </div>
                             <div class="custom-fld col-sm-6">
-                                <h4>*Location <span>{{ $user->profile->location ??''}}</span></h4>
+                                <h4>*Location <span>{{ $user->userDetail->location ??''}}</span></h4>
                             </div>
                             <div class="custom-fld col-sm-6">
-                                <h4>*Address <span>{{ $user->profile->address ??''}}</span></h4>
+                                <h4>*Address <span>{{ $user->userDetail->address ??''}}</span></h4>
                             </div>
                         </div>
 

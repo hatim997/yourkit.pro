@@ -16,18 +16,18 @@ class SubCategory extends Model
     protected $fillable = ['name', 'category_id', 'description', 'slug','status'];
 
 
-    public static function boot()
-    {
-        parent::boot();
+    // public static function boot()
+    // {
+    //     parent::boot();
 
-        static::creating(function ($model) {
-            $model->slug = Str::slug($model->name);
-        });
+    //     static::creating(function ($model) {
+    //         $model->slug = Str::slug($model->name);
+    //     });
 
-        static::updating(function ($model) {
-            $model->slug = Str::slug($model->name);
-        });
-    }
+    //     static::updating(function ($model) {
+    //         $model->slug = Str::slug($model->name);
+    //     });
+    // }
 
     /**
      * Get the user that owns the SubCategory

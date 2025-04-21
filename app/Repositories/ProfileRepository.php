@@ -24,15 +24,15 @@ Class ProfileRepository extends BaseRepository {
             'name' => $data['name']
         ]);
 
-        if ($user->profile) {
-            $user->profile->update([
+        if ($user->userDetail) {
+            $user->userDetail->update([
                 'dob' => $data['dob'],
                 'location' => $data['location'],
                 'address' => $data['address']
             ]);
         } else {
             // Create content if it doesn't exist
-            $user->profile()->create([
+            $user->userDetail()->create([
                 'dob' => $data['dob'],
                 'location' => $data['location'],
                 'address' => $data['address']

@@ -14,7 +14,7 @@
                                 <h2>{{ $banner->title }}</h2>
                                 <h4>{{ $banner->description }}</h4>
                                 <br/>
-                                <a href="{{ route('product') }}" class="btn btn-outline-warning mt-4">Get started today <i
+                                <a href="{{ route('frontend.product') }}" class="btn btn-outline-warning mt-4">Get started today <i
                                         class="fa-solid fa-arrow-right"></i></a>
                             </div>
                         </div>
@@ -102,7 +102,7 @@
                           <li>T-Shirts</li>
                           <li>Caps</li>
                           <li>Kangaroos</li>
-                          <li>ML T-Shirts</li>                  
+                          <li>ML T-Shirts</li>
                           <li>Hats</li>
                         </ul> --}}
                         {{-- <a href="{{$bnr4->url}}" class="btn btn-outline-warning mt-3">{{$bnr4->url_name}} <i class="fa-solid fa-arrow-right"></i></a> --}}

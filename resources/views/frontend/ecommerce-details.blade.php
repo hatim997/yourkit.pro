@@ -171,7 +171,7 @@
                                     data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
                                         <div class="service-dtl-info">
-                                          
+
                                             <p>{!! $product->description !!}</p>
                                         </div>
                                     </div>
@@ -302,7 +302,7 @@
                 formData.append('sessionId', sessionId)
                 formData.append('quantity', quqantity)
 
-                let url = '{{ route('ecom.cart.submit') }}';
+                let url = '{{ route('frontend.ecom.cart.submit') }}';
 
                 $.ajaxSetup({
                     headers: {
@@ -321,13 +321,13 @@
                         console.log(response)
 
 
-                   
+
                             if (response.status) {
                                 localStorage.setItem('sessionId', JSON.stringify(response
                                     .data));
-                                window.location.href = "{{ route('cart') }}";
+                                window.location.href = "{{ route('frontend.cart') }}";
                             }else{
-                      
+
                            toastr.error(response.message, 'Error');
                        }
                     },
@@ -361,7 +361,7 @@
             let selectedSize = null;
             let currentSelectedSize = null;
             const productId = document.querySelector('input[name="product_id"]').value;
-            const fetchAttributesUrl = "{{ route('fetch.ecom.attr') }}";
+            const fetchAttributesUrl = "{{ route('frontend.fetch.ecom.attr') }}";
 
             const firstColorElement = document.querySelector('.colors');
             const firstSizeElement = document.querySelector('.sizes');
@@ -440,7 +440,7 @@
                                 document.querySelector('.price h5').textContent = `$${data.price}`;
                                 document.querySelector('input[name="price"]').value = data.price;
 
-                                
+
 
 
                                 let imgHtml = '';
@@ -545,15 +545,15 @@
                                 document.querySelectorAll('.colors').forEach(el => el.classList.remove(
                                     'selected'));
 
-                               
+
                                 document.querySelectorAll('.sizes').forEach(el => el.classList.remove(
                                     'selected'));
 
-                              
+
                                 document.querySelector('input[name="color"]').value = '';
                                 document.querySelector('input[name="size"]').value = '';
 
-                              
+
                                 selectedColor = null;
                                 selectedSize = null;
                                 currentSelectedColor = null;
@@ -570,7 +570,7 @@
     // Optionally clear input field for price
     document.querySelector('input[name="price"]').value = '';
 
-    
+
                             }
                         })
                         .catch(error => {

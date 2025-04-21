@@ -11,13 +11,13 @@
                 <div class="col-12 col-md-6">
                     <div class="login-register-form-wrap">
                         <h3>Login</h3>
-                        <form action="{{ route('login') }}" method="POST">
+                        <form action="{{ route('frontend.login') }}" method="POST" id="formUserLogin">
                             @csrf
                             <div class="form-group mb-3">
                                 <label for="loginEmail" class="form-label">Email address <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control @error('user_email') is-invalid @enderror"
                                     placeholder="Enter your email" name="user_email" required>
-                        
+
                                 @error('user_email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -28,12 +28,24 @@
                                 <label for="loginPassword" class="form-label">Password <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control @error('user_password') is-invalid @enderror"
                                     placeholder="Enter your password" name="user_password" required>
-                        
+
                                 @error('user_password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                            </div>
+                            <div class="form-group mb-3 my-8">
+                                @if(config('captcha.version') === 'v3')
+                                    {!! \App\Helpers\Helper::renderRecaptcha('formUserLogin', 'register') !!}
+                                @elseif(config('captcha.version') === 'v2')
+                                    <div class="form-field-block">
+                                        {!! app('captcha')->display() !!}
+                                        @if ($errors->has('g-recaptcha-response'))
+                                            <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
                             <div class="form-group mb-3">
                                 <button type="submit" class="btn btn-submit">Login</button>
@@ -56,7 +68,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="forgotPasswordForm" action="{{route('forget.password.post')}}" method="POST">
+                                <form id="forgotPasswordForm" action="{{route('frontend.forget.password.post')}}" method="POST">
                                     @csrf
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Enter your registered email</label>
@@ -72,7 +84,7 @@
                 <div class="col-12 col-md-6">
                     <div class="login-register-form-wrap">
                         <h3>Register</h3>
-                        <form action="{{ route('register') }}" method="POST">
+                        <form action="{{ route('frontend.register') }}" method="POST" id="formRegisterLogin">
                             @csrf
                             <div class="form-group mb-3">
                                 <label for="registerName" class="form-label">Full Name <span
@@ -134,6 +146,18 @@
                                     </span>
                                 @enderror
                             </div>
+                            <div class="form-group mb-3 my-8">
+                                @if(config('captcha.version') === 'v3')
+                                    {!! \App\Helpers\Helper::renderRecaptcha('formRegisterLogin', 'register') !!}
+                                @elseif(config('captcha.version') === 'v2')
+                                    <div class="form-field-block">
+                                        {!! app('captcha')->display() !!}
+                                        @if ($errors->has('g-recaptcha-response'))
+                                            <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-submit">Register</button>
                             </div>
@@ -145,4 +169,8 @@
         </div>
     </section>
 
+@endsection
+
+@section('script')
+    {!! NoCaptcha::renderJs() !!}
 @endsection

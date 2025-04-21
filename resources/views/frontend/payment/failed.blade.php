@@ -23,7 +23,7 @@
                 <div class="text-center">
                     <h1>Oh No !</h1>
                     <p>Your payment failed</p>
-                    <a href="{{ route('home') }}" class="btn btn-outline-danger">Back Home</a>
+                    <a href="{{ route('frontend.home') }}" class="btn btn-outline-danger">Back Home</a>
                 </div>
             </div>
     </section>
