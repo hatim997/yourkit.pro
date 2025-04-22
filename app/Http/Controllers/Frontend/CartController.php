@@ -12,6 +12,7 @@ use App\Models\EcomAttributeImage;
 use App\Models\EcommerceAttribute;
 use App\Models\Product;
 use App\Models\ProductPosition;
+use App\Models\PromoCode;
 use App\Models\SubCategory;
 use App\Repositories\BundleRepository;
 use App\Repositories\CartRepository;
@@ -52,7 +53,7 @@ class CartController extends Controller
     {
 
         $carts = $this->cartRepository->getCartDetails($sessionId);
-        Log::info("Cart Info".$carts);
+        Log::info("Cart Info" . $carts);
 
         $html = '';
         $total = 0;
@@ -67,7 +68,8 @@ class CartController extends Controller
                 </div>';
             foreach ($carts as $cart) {
 
-                $total = $total + $cart->total_cost;
+                $totalDiscountedAmount = $cart->total_cost - $cart->discount;
+                $total = $total + $totalDiscountedAmount;
                 if ($cart->table == 'bundles') {
                     $html .= '<div>
 
@@ -141,23 +143,23 @@ class CartController extends Controller
                             $html .= '</ul></div>';
                         }
                     }
-
                     $html .= '</div>
-                        <h5 class="price">' . (HelpersHelper::formatCurrency($cart->bundle->price)) . '</h5>
-                    </div>
+                            <h5 class="price">' . (HelpersHelper::formatCurrency($cart->bundle->price)) . '</h5>
+                        </div>
 
-                </div><div class="print-charge"><h5>Size Extra Cost</h5><h5><strong>' .  (HelpersHelper::formatCurrency($cart->size_extra_cost)) . '</strong></h5></div>
-                <div class="print-charge"><h5>Extra Printing Location Cost</h5><h5><strong>' .  (HelpersHelper::formatCurrency($cart->position_extra_cost) ) . '</strong></h5></div>
-                <div class="print-charge"><h5>Email/Contact Extra Cost</h5><h5><strong>' .  ( HelpersHelper::formatCurrency($cart->info_extra_cost) ) . '</strong></h5></div>
-                <div class="print-charge"><h5></h5><h5><strong>' .  (HelpersHelper::formatCurrency($cart->total_cost)) . '</strong></h5></div>
-                <div class="print-charge"></div>';
+                    </div><div class="print-charge"><h5>Size Extra Cost</h5><h5><strong>' .  (HelpersHelper::formatCurrency($cart->size_extra_cost)) . '</strong></h5></div>
+                    <div class="print-charge"><h5>Extra Printing Location Cost</h5><h5><strong>' .  (HelpersHelper::formatCurrency($cart->position_extra_cost)) . '</strong></h5></div>
+                    <div class="print-charge"><h5>Email/Contact Extra Cost</h5><h5><strong>' .  (HelpersHelper::formatCurrency($cart->info_extra_cost)) . '</strong></h5></div>
+                    <div class="print-charge"><h5>Discount</h5><h5><strong>' .  (HelpersHelper::formatCurrency($cart->discount)) . '</strong></h5></div>
+                    <div class="print-charge"><h5></h5><h5><strong>' .  (HelpersHelper::formatCurrency($totalDiscountedAmount)) . '</strong></h5></div>
+                    <div class="print-charge"></div>';
                 } else {
 
                     ////////////ecom/////////////
                     $html .= '<div>
 
-                <div class="mid-part py-4"><hr>
-                    <ul class="filter-lst">';
+                    <div class="mid-part py-4"><hr>
+                        <ul class="filter-lst">';
 
 
                     $prod = Product::find($cart->table_id);
@@ -231,7 +233,7 @@ class CartController extends Controller
 
                             $html .= '</ul></div>';
                             $html .= '</div>
-                    <h5 class="price">' . ( HelpersHelper::formatCurrency($cart->total_cost) ) . '</h5>
+                    <h5 class="price">' . (HelpersHelper::formatCurrency($cart->total_cost)) . '</h5>
                 </div><hr>';
                         }
                     }
@@ -757,5 +759,29 @@ class CartController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    public function applyPromo(Request $request)
+    {
+        $code = $request->promo_code;
+        $promoCode = PromoCode::where('code', $code)->first();
+        if (!$promoCode) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid promo code.'
+            ]);
+        }
+        if (!$promoCode->isValid()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid or expired promo code.'
+            ]);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Promo code applied. You got '.$promoCode->discount_percentage.'% off!',
+            'discount_percentage' => $promoCode->discount_percentage,
+            'promo_code_id' => $promoCode->id,
+        ]);
     }
 }

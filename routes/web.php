@@ -27,6 +27,7 @@ use App\Http\Controllers\Dashboard\RolePermission\PermissionController;
 use App\Http\Controllers\Dashboard\RolePermission\RoleController;
 use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\Dashboard\TaxController;
+use App\Http\Controllers\Dashboard\PromoCodeController;
 use App\Http\Controllers\Dashboard\User\ArchivedUserController;
 use App\Http\Controllers\Dashboard\User\UserController;
 use App\Http\Controllers\Frontend\AuthController as FrontendAuthController;
@@ -216,6 +217,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             //Email Template
             Route::resource('/email-templates', EmailTemplateController::class);
 
+            //Promo Code Template
+            Route::resource('/promo-codes', PromoCodeController::class);
+
         });
     });
 });
@@ -276,6 +280,7 @@ Route::name('frontend.')->group(function () {
         Route::post('user/profile/edit', [DashboardController::class, 'updateProfile'])->name('profile.update');
         Route::post('upload-image', [DashboardController::class, 'uploadImage'])->name('upload.image');
 
+        Route::post('/apply-promo', [CartController::class, 'applyPromo'])->name('apply.promo');
         Route::get('checkout', [CheckoutController::class, 'index'])->name('checkout.index');
         Route::post('checkout', [CheckoutController::class, 'submit'])->name('checkout.store');
 
@@ -289,6 +294,10 @@ Route::name('frontend.')->group(function () {
 
 
 //Artisan Routes
+Route::get('/link-storage', function () {
+    Artisan::call('storage:link');
+    return "Stored linked successfully!";
+})->name('clear.cache');
 Route::middleware(['auth'])->group(function () {
     Route::get('/clear-cache', function () {
         Artisan::call('cache:clear');

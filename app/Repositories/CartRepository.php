@@ -76,6 +76,7 @@ class CartRepository extends BaseRepository
         $totalPositionCost = 0.00;
         $totalInfoDocCost = 0.00;
         $totalPositionCost = 0;
+        $discount = $data['discount'];
 
 
         /** insert cart data **/
@@ -87,7 +88,8 @@ class CartRepository extends BaseRepository
             'cartId' => $cartId,
             'sessionId' => $data['sessionId'],
             'table_id' => $data['table_id'],
-            'comment' => $data['comment']
+            'comment' => $data['comment'],
+            'discount' => $discount,
         ];
 
         $cart = $this->model->create($cartData);
@@ -211,6 +213,7 @@ class CartRepository extends BaseRepository
         $totalPositionCost = 0.00;
         $totalInfoDocCost = 0.00;
         $totalPositionCost = 0;
+        $discount = $data['discount'];
 
         $cart = $this->findOrFail($data['cartId']);
         $cart->contents()->delete();
@@ -321,6 +324,7 @@ class CartRepository extends BaseRepository
         $cart->info_extra_cost = $totalInfoDocCost;
         $cart->total_extra_cost = $totalExtraCost;
         $cart->total_cost = $totalCost;
+        $cart->discount = $discount;
         $cart->comment = $data['comment'];
         $cart->save();
         return $cart->sessionId;
@@ -332,6 +336,7 @@ class CartRepository extends BaseRepository
     {
 
         $total = 0;
+        $discount = 0;
         $carts = Cart::where('sessionId', $data['sessionId'])->get();
 
         if ($carts->isNotEmpty()) {
@@ -341,6 +346,7 @@ class CartRepository extends BaseRepository
                 $cart->logo = !empty($files) ? json_encode($files) : null;
                 $cart->comment = $data['comment'] ?? '';
                 $cart->save();
+                $discount += $cart->discount;
             }
         }
 
@@ -349,6 +355,7 @@ class CartRepository extends BaseRepository
         $sessionData = [
             'currency_symbol' => Helper::setting('currency-symbol') ?? '$',
             'total' => $total,
+            'discount' => $discount,
             'sessionId' => $data['sessionId'],
             'returnURL' => route('frontend.checkout.index')
         ];

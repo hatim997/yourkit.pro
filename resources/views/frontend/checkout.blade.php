@@ -96,10 +96,20 @@
                             </div>
                             <div class="col-md-12">
                                 <h3>Country *</h3>
-                                <select class="form-select" name="country">
+                                {{-- <select class="form-select" name="country">
                                     <option value="">Select Country</option>
                                     @foreach ($countries as $country)
-                                        <option value="{{ $country->name }}" {{ old('country') == $country->id ? 'selected' : '' }}>
+                                        <option value="{{ $country->name }}" data-code="{{ $country->code }}"
+                                            {{ old('country') == $country->id ? 'selected' : '' }}>
+                                            {{ $country->name }}
+                                        </option>
+                                    @endforeach
+                                </select> --}}
+                                <select class="form-select" name="country" id="country">
+                                    <option value="">Select Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->name }}" data-code="{{ $country->code }}"
+                                            {{ old('country') == $country->name ? 'selected' : '' }}>
                                             {{ $country->name }}
                                         </option>
                                     @endforeach
@@ -138,7 +148,8 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="mt-1 mb-1">
-                                    <p style="color: #ff8b00">Note: Shipping cost will be charged separately once the order is ready</p>
+                                    <p style="color: #ff8b00">Note: Shipping cost will be charged separately once the order
+                                        is ready</p>
                                 </div>
 
                                 <h3>Choose one as per your need</h3>
@@ -179,34 +190,56 @@
                         </div>
 
                         <div class="order-details">
+                            <!-- Promo Code Section -->
+                            {{-- @if (isset($discount) && $discount == 0) --}}
+                            <div class="promo-code-box mb-4 p-3 border rounded bg-light">
+                                <label for="promo_code" class="form-label fw-bold mb-2">Have a Promo Code?</label>
+                                <div class="d-flex flex-wrap gap-2 align-items-center">
+                                    <input type="text" name="promo_code" id="promo_code" class="form-control"
+                                        placeholder="Enter promo code" style="max-width: 250px;">
+                                    <button type="button" id="applyPromoBtn" class="btn btn-success px-4">Apply</button>
+                                    <span id="promoMessage" class="ms-3 small text-muted"></span>
+                                </div>
+                            </div>
+                            {{-- @endif --}}
                             <div class="single-widget">
                                 <h2>CART TOTALS</h2>
                                 <div class="content">
                                     <ul>
-                                        <li>Sub Total<span>{{ $currency_symbol . number_format($total, 2) }}</span></li>
+                                        <li>Sub Total<span
+                                                id="totalAmount">{{ $currency_symbol . number_format($total, 2) }}</span>
+                                        </li>
+                                        <li>Discount<span
+                                                id="discountAmount">{{ $currency_symbol . number_format($discount, 2) }}</span>
+                                        </li>
+                                        <input type="hidden" id="sub-total" value="{{ $total }}">
+                                        <input type="hidden" id="current-discount" value="{{ $discount }}">
                                         {{-- <li>(+) Shipping<span>{{ $currency_symbol }}00.00</span></li> --}}
                                         {{-- <li>(+) {{ $tax_tvq_string }}<span>{{ $currency_symbol . $tax_tvq }}</span></li>
                                         <li>(+) {{ $tax_tps_string }}<span>{{ $currency_symbol . $tax_tps }}</span></li> --}}
 
                                         @php
-                                            $totalAmount =$total;
+                                            $totalAmount = $total - $discount;
                                         @endphp
 
-                                        @foreach ($taxes as $tax)
+                                        {{-- @foreach ($taxes as $tax)
                                             @php
                                                 $taxAmount = isset($tax->percentage)
                                                     ? ($tax->percentage * $total) / 100
                                                     : 0;
-                                                $totalAmount +=  $taxAmount;
+                                                $totalAmount += $taxAmount;
 
                                             @endphp
 
                                             <li>(+)
                                                 {{ $tax->tax_type . ' ' . $tax->percentage . '% (' . $tax->tax_code . ')' }}<span>{{ $currency_symbol . number_format($taxAmount, 2) }}</span>
                                             </li>
-                                        @endforeach
+                                        @endforeach --}}
+                                        <div id="taxes-list">
+                                            <!-- Taxes will be dynamically inserted here -->
+                                        </div>
 
-                                        <li>Total<span>{{ number_format($totalAmount,2) }}</span></li>
+                                        <li>Total<span id="grandTotal">{{ number_format($totalAmount, 2) }}</span></li>
                                     </ul>
                                 </div>
                             </div>
@@ -281,7 +314,10 @@
                             </div>
 
                             <input type="hidden" name="sessionId" value="{{ $sessionId }}">
-                            <input type="hidden" name="amount" value="{{ $total }}">
+                            <input type="hidden" name="sub_amount" value="{{ $total }}">
+                            <input type="hidden" name="discount" value="{{ $discount }}">
+                            <input type="hidden" name="final_amount" value="{{ $totalAmount }}">
+                            <input type="hidden" name="promo_code_id">
 
                             <button type="button" id="pay-with-authorise-payment" class="btn btn-warning w-100">Place
                                 Order</button>
@@ -322,7 +358,8 @@
                                     <select class="form-select" name="shipping_country">
                                         <option value="">Select Country</option>
                                         @foreach ($countries as $country)
-                                            <option value="{{ $country->name }}" {{ old('shipping_country') == $country->id ? 'selected' : '' }}>
+                                            <option value="{{ $country->name }}"
+                                                {{ old('shipping_country') == $country->id ? 'selected' : '' }}>
                                                 {{ $country->name }}
                                             </option>
                                         @endforeach
@@ -371,6 +408,8 @@
 
 @push('scripts')
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <script>
         $(document).ready(function() {
@@ -413,6 +452,189 @@
                 $('#checkoutForm').submit();
 
             });
+
+            var canadianTaxes = @json($taxes); // Ensure $taxes contains only Canadian taxes
+            var currencySymbol = '{{ $currency_symbol }}';
+
+            function calculateGrandTotal() {
+                const country = $('#country').val();
+                const baseTotal = parseFloat($('#sub-total').val());
+                const discount = parseFloat($('#current-discount').val());
+                let taxTotal = 0;
+
+                const $taxesList = $('#taxes-list');
+                $taxesList.empty();
+
+                if (country === 'Canada') {
+                    $.each(canadianTaxes, function(index, tax) {
+                        const taxAmount = (tax.percentage / 100) * baseTotal;
+                        taxTotal += taxAmount;
+
+                        const taxItem = `
+                            <li>(+) ${tax.tax_type} ${tax.percentage}% (${tax.tax_code})
+                            <span>${currencySymbol}${taxAmount.toFixed(2)}</span></li>
+                        `;
+                        $taxesList.append(taxItem);
+                    });
+                }
+
+                const grandTotal = (baseTotal - discount) + taxTotal;
+                $('#grandTotal').text(grandTotal.toFixed(2));
+                $('input[name="final_amount"]').val(grandTotal.toFixed(2)); // ✅ update hidden field
+            }
+
+
+            calculateGrandTotal();
+
+            $('#applyPromoBtn').on('click', function() {
+                let promoCode = $('#promo_code').val().trim();
+                let $message = $('#promoMessage');
+                let currentDiscount = $('#current-discount').val();
+
+                if (!promoCode) {
+                    $message.text('Please enter a promo code.').removeClass().addClass('text-danger');
+                    return;
+                }
+
+                if (parseInt(currentDiscount) > 0) {
+                    Swal.fire({
+                        title: 'You already have a discount!',
+                        text: "Do you want to replace it with the new promo code?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, replace it',
+                        cancelButtonText: 'No, keep current'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            applyPromoCode(promoCode, $message);
+                        }
+                    });
+                } else {
+                    applyPromoCode(promoCode, $message);
+                }
+            });
+
+            function applyPromoCode(promoCode, $message) {
+                $.ajax({
+                    url: '{{ route('frontend.apply.promo') }}',
+                    method: 'POST',
+                    data: {
+                        promo_code: promoCode,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    beforeSend: function() {
+                        $message.text('Checking...').removeClass().addClass('text-info');
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $message.text(response.message).removeClass().addClass('text-success');
+
+                            // Get current values
+                            let originalTotal = parseFloat($('#sub-total').val());
+                            console.log('current total ', originalTotal);
+
+                            let oldDiscount = parseFloat($('#current-discount').val());
+                            console.log('current discount ', oldDiscount);
+                            let percentage = parseFloat(response
+                                .discount_percentage); // Make sure backend returns this
+
+                            // Calculate new discount
+                            let newDiscount = Math.round((percentage / 100) * originalTotal);
+                            let updatedTotal = originalTotal - newDiscount;
+
+                            let promoCodeId = response.promo_code_id
+
+                            // Update UI
+                            $('#discountAmount').text('{{ $currency_symbol }}' + newDiscount.toFixed(
+                                2));
+                            $('#totalAmount').text(updatedTotal.toFixed(2));
+                            $('#current-discount').val(newDiscount.toFixed(2));
+                            $('#sub-total').val(updatedTotal.toFixed(
+                                2)); // optional: update base total
+                            $('input[name="discount"]').val(newDiscount.toFixed(2));
+                            $('input[name="sub_amount"]').val(updatedTotal.toFixed(2));
+                            $('input[name="promo_code_id"]').val(promoCodeId);
+
+
+                            calculateGrandTotal();
+                        } else {
+                            $message.text(response.message).removeClass().addClass('text-danger');
+                        }
+                    },
+                    error: function() {
+                        $message.text('Something went wrong!').removeClass().addClass('text-danger');
+                    }
+                });
+            }
+
+            $('#country').on('change', calculateGrandTotal);
+
+
+            // function applyPromoCode(promoCode, $message) {
+            //     $.ajax({
+            //         url: '{{ route('frontend.apply.promo') }}',
+            //         method: 'POST',
+            //         data: {
+            //             promo_code: promoCode,
+            //             _token: '{{ csrf_token() }}'
+            //         },
+            //         beforeSend: function() {
+            //             $message.text('Checking...').removeClass().addClass('text-info');
+            //         },
+            //         success: function(response) {
+            //             if (response.success) {
+            //                 $message.text(response.message).removeClass().addClass('text-success');
+            //                 // location.reload();
+            //             } else {
+            //                 $message.text(response.message).removeClass().addClass('text-danger');
+            //             }
+            //         },
+            //         error: function() {
+            //             $message.text('Something went wrong!').removeClass().addClass('text-danger');
+            //         }
+            //     });
+            // }
+
+
+
+            // $('#applyPromoBtn').on('click', function() {
+            //     let promoCode = $('#promo_code').val().trim();
+            //     let $message = $('#promoMessage');
+
+            //     if (!promoCode) {
+            //         $message.text('Please enter a promo code.').removeClass().addClass('text-danger');
+            //         return;
+            //     }
+
+            //     $.ajax({
+            //         url: '{{ route('frontend.apply.promo') }}', // make sure this route exists
+            //         method: 'POST',
+            //         data: {
+            //             promo_code: promoCode,
+            //             _token: '{{ csrf_token() }}'
+            //         },
+            //         beforeSend: function() {
+            //             $message.text('Checking...').removeClass().addClass('text-info');
+            //         },
+            //         success: function(response) {
+            //             if (response.success) {
+            //                 $message.text(response.message).removeClass().addClass(
+            //                     'text-success');
+
+            //                 // Optionally update values
+            //                 // $('#totalAmount').text(response.new_total);
+            //                 // $('#discountSection').text(response.discount_amount);
+            //             } else {
+            //                 $message.text(response.message).removeClass().addClass(
+            //                     'text-danger');
+            //             }
+            //         },
+            //         error: function() {
+            //             $message.text('Something went wrong!').removeClass().addClass(
+            //                 'text-danger');
+            //         }
+            //     });
+            // });
 
         })
     </script>

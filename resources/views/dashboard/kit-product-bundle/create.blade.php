@@ -87,12 +87,22 @@
                             </table>
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="mb-3">
                             <label for="image" class="form-label">Image</label>
                             <input type="file" class="form-control @error('image') is-invalid @enderror" accept="image/*"
                                 id="image" name="image">
                             @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="discount_percentage" class="form-label">Discount Percentage (%) <span class="text-danger">*</span></label>
+                            <input type="number" min="0" max="100" class="form-control @error('discount_percentage') is-invalid @enderror" id="discount_percentage"
+                                name="discount_percentage" value="{{ old('discount_percentage', 0) }}" required>
+                            @error('discount_percentage')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -136,6 +146,14 @@
             });
 
 
+            $('#discount_percentage').on('input', function () {
+                let value = parseInt($(this).val());
+                if (value < 0) {
+                    $(this).val(0);
+                } else if (value > 100) {
+                    $(this).val(100);
+                }
+            });
         });
 
         function removeRow(row) {

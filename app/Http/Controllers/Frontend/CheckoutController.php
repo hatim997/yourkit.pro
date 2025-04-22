@@ -50,7 +50,7 @@ class CheckoutController extends Controller
         $taxes = Tax::where('status', 1)->get();
           $countries = DB::table('countries')->get();
 
-        return view('frontend.checkout', ['currency_symbol' => $cartData['currency_symbol'] ,'total' => $cartData['total'], 'sessionId' => $cartData['sessionId'], 'user' => $user, 'taxes' => $taxes,'countries'=>$countries]);
+        return view('frontend.checkout', ['currency_symbol' => $cartData['currency_symbol'] ,'total' => $cartData['total'], 'sessionId' => $cartData['sessionId'], 'user' => $user, 'taxes' => $taxes,'countries'=>$countries, 'discount' => $cartData['discount']]);
     }
 
     public function submit(Request $request)

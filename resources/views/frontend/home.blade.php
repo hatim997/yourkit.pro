@@ -1,5 +1,5 @@
 @extends('frontend.layouts')
-
+{{-- @dd($bundles) --}}
 @section('content')
     <section class="banner">
         <div class="banner-slider owl-carousel">

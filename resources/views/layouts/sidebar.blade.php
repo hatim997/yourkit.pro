@@ -78,6 +78,14 @@
                 </a>
             </li>
         @endcan
+        @can(['view promo code'])
+            <li class="menu-item {{ request()->routeIs('dashboard.promo-codes.*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.promo-codes.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-ticket"></i>
+                    <div>{{ __('Promo Codes') }}</div>
+                </a>
+            </li>
+        @endcan
         @can(['view banner'])
             <li class="menu-item {{ request()->routeIs('dashboard.banners.*') ? 'active' : '' }}">
                 <a href="{{ route('dashboard.banners.index') }}" class="menu-link">

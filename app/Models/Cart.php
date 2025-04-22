@@ -12,7 +12,7 @@ class Cart extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['table', 'table_id', 'cartId', 'sessionId', 'print_positions', 'size_extra_cost', 'position_extra_cost', 'info_extra_cost', 'total_extra_cost', 'total_cost', 'is_email_checked', 'is_phone_checked', 'comment', 'is_phone_on_t-shirt', 'is_phone_on_hoodie', '	is_email_on_t-shirt', 'is_email_on_hoodie'];
+    protected $fillable = ['table', 'table_id', 'cartId', 'sessionId', 'print_positions', 'size_extra_cost', 'position_extra_cost', 'info_extra_cost', 'total_extra_cost', 'total_cost', 'is_email_checked', 'is_phone_checked', 'comment', 'is_phone_on_t-shirt', 'is_phone_on_hoodie', '	is_email_on_t-shirt', 'is_email_on_hoodie', 'discount'];
 
     public function contents(): HasMany
     {

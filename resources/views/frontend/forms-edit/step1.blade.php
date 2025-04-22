@@ -50,6 +50,18 @@
                             <input type="hidden" id="size_extra_cost_{{ $product->id }}"
                                 name="product[{{ $key }}][size_extra_cost]" value="0.00">
 
+                            @if ($bundle->discount_percentage > 0)
+                                @php
+                                    $discountedPrice = round(
+                                        $bundle->price - ($bundle->price * $bundle->discount_percentage) / 100,
+                                    );
+                                    $discountValue = $bundle->price - $discountedPrice;
+                                @endphp
+                                <input type="hidden" name="discount" value="{{ $discountValue }}">
+                            @else
+                                <input type="hidden" name="discount" value="0.00">
+                            @endif
+
                             <div class="filters-color">
                                 <label for="select-color">Select Color</label>
                                 <div class="color-selector">

@@ -14,6 +14,7 @@ use App\Models\Order;
 use App\Models\OrderTax;
 use App\Models\PositionImage;
 use App\Models\Product;
+use App\Models\PromoCode;
 use App\Models\Tax;
 use App\Services\InvoiceService;
 use App\Services\Payments\StripePaymentService;
@@ -50,27 +51,31 @@ class OrderRepository extends BaseRepository
         $total = 0;
         $finalAmount = 0;
         $totalTaxAmount = 0;
+        $totalDiscount = 0;
         $image='';
         $data['user_id'] = Auth::user()->id;
+
+        $totalDiscount = $data['discount'];
         unset($data['amount']);
+
         $order = Order::create($data);
 
         $carts = Cart::where('sessionId', $data['sessionId'])->get();
 
         if ($carts->isNotEmpty()) {
             foreach ($carts as $cart) {
-               
+
                 $image = $cart->logo ?? '';
 
                 $total = $total + $cart->total_cost;
                 if ($cart->table == 'bundles') {
-                   
+
 
                     foreach ($cart->contents as $content) {
                         $bundle=Bundle::find($cart->bundle->id);
                         foreach($bundle->products as $prod){
                             if($prod->status !== 1){
-                               
+
                                 return $prod;
                             }
                         }
@@ -83,7 +88,7 @@ class OrderRepository extends BaseRepository
                             'positions' => $content->positions,
                             'is_email_checked' => $cart->is_email_checked,
                             'is_phone_checked' => $cart->is_phone_checked,
-                           
+
                         ]);
                     }
                 } else{
@@ -91,7 +96,7 @@ class OrderRepository extends BaseRepository
                         //dd($cart);
                         $produ=Product::find($cart->table_id);
                         if($produ->status !== 1){
-                               
+
                             return $produ;
                         }
                         $order->details()->create([
@@ -114,25 +119,32 @@ class OrderRepository extends BaseRepository
         }
 
         // dd($total);
-
-        /** Tax Calculation **/
-        $taxes = Tax::where('status', 1)->get();
-
-        foreach ($taxes as $tax) {
-
-            $taxAmount = isset($tax->percentage) ? ($tax->percentage * $total) / 100 : 0;
-            $totalTaxAmount = $totalTaxAmount + $taxAmount;
-            // dd($taxAmount);
-
-            OrderTax::create([
-                'order_id' => $order->id,
-                'tax_type' => $tax->tax_type,
-                'tax_percentage' => $tax->percentage,
-                'taxable_amount' => $taxAmount,
-            ]);
+        if(isset($data['promo_code_id'])){
+            $promoCode = PromoCode::findOrFail($data['promo_code_id']);
+            $finalAmount = $total - $totalDiscount;
+            $promoCode->incrementUsage();
         }
 
-        $finalAmount = $total + $totalTaxAmount;
+        /** Tax Calculation **/
+        if(isset($data['country']) && $data['country'] === 'Canada'){
+            $taxes = Tax::where('status', 1)->get();
+
+            foreach ($taxes as $tax) {
+
+                $taxAmount = isset($tax->percentage) ? ($tax->percentage * $total) / 100 : 0;
+                $totalTaxAmount = $totalTaxAmount + $taxAmount;
+                // dd($taxAmount);
+
+                OrderTax::create([
+                    'order_id' => $order->id,
+                    'tax_type' => $tax->tax_type,
+                    'tax_percentage' => $tax->percentage,
+                    'taxable_amount' => $taxAmount,
+                ]);
+            }
+
+            $finalAmount = $total + $totalTaxAmount;
+        }
 
         // dd(round($finalAmount, 2));
 
@@ -142,6 +154,7 @@ class OrderRepository extends BaseRepository
         $order->amount = $total;
         $order->final_amount = $finalAmount;
         $order->taxable_amount = $totalTaxAmount;
+        $order->discount_amount = $totalDiscount;
         $order->save();
 
         // ----------Stripe Payment----------
@@ -168,9 +181,9 @@ class OrderRepository extends BaseRepository
             'expiration_date' => $data["expiry"],
             'cvv' => $data["cvv"]
         ];
-        
+
         $charge = $this->authorizeNetPaymentService->createPayment($paymentData);
-        
+
         if ($charge['status'] == "success") {
             $order->payment_status = 2;
         }
@@ -185,7 +198,7 @@ class OrderRepository extends BaseRepository
 
         $order->transaction_id = $charge['transaction_id'];
         $order->save();
-        
+
         // Cleariing Cart
         CartContent::whereHas("cart", function($q) use($data){
             $q->where('sessionId', $data['sessionId']);
@@ -206,7 +219,7 @@ class OrderRepository extends BaseRepository
 
         // calling event for sending mail to operational email ID
         event(new SendInvoiceEmailAdminEvent(Helper::getOperationalContacts()["email"], 'New order placed by '.$order->user->name,  $invoice['file_path'], $order->user, $order));
-        
+
         return $charge;
     }
 
@@ -257,13 +270,13 @@ class OrderRepository extends BaseRepository
 
     function generateOrderID()
 {
-    
+
     $lastOrder = Order::latest('id')->first();
 
-   
+
     $nextNumber = $lastOrder ? ((int) str_replace('OD-', '', $lastOrder->orderID)) + 1 : 1;
 
-   
+
     return 'OD-' . str_pad($nextNumber, 9, '0', STR_PAD_LEFT);
 }
 }

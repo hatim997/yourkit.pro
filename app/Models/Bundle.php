@@ -11,7 +11,7 @@ class Bundle extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['uuid', 'subcategories', 'name', 'price', 'image', 'status', 'bundle_amount'];
+    protected $fillable = ['uuid', 'subcategories', 'name', 'price', 'discount_percentage', 'image', 'status', 'bundle_amount'];
 
     public function products(): BelongsToMany
     {

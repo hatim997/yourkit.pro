@@ -57,6 +57,7 @@ class KitProductBundleController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'price' => 'required|integer|min:0',
+            'discount_percentage' => 'required|integer|min:0|max:100',
             'status' => 'required|in:1,0',
             'image' => 'required|file|max_size',
             'products' => 'required|array',
@@ -73,6 +74,7 @@ class KitProductBundleController extends Controller
             $bundle = new Bundle();
             $bundle->name = $request->name;
             $bundle->price = $request->price;
+            $bundle->discount_percentage = $request->discount_percentage;
             $bundle->status = $request->status;
             $bundle->subcategories = '[]';
             $bundle->max_quantity = '0';
@@ -146,6 +148,7 @@ class KitProductBundleController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'price' => 'required|integer|min:0',
+            'discount_percentage' => 'required|integer|min:0|max:100',
             'status' => 'required|in:1,0',
             'image' => 'mullable|file|max_size',
             'products' => 'required|array',
@@ -162,6 +165,7 @@ class KitProductBundleController extends Controller
             $bundle = Bundle::findOrFail($id);
             $bundle->name = $request->name;
             $bundle->price = $request->price;
+            $bundle->discount_percentage = $request->discount_percentage;
             $bundle->status = $request->status;
             $bundle->subcategories = '[]';
             $bundle->max_quantity = '0';
