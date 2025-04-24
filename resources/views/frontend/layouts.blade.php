@@ -45,7 +45,22 @@
   gtag('config', 'G-VTR94KBZJN');
 </script>
 
-
+<style>
+    .discount-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        font-size: 15px;
+        transform: translate(50%, -50%);
+        z-index: 1;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        line-height: 1.2;
+        padding: 4px;
+    }
+    .discount-badge small {
+        font-size: 8px;
+    }
+</style>
 </head>
 
 <body>

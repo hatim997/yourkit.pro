@@ -97,7 +97,8 @@
                                 id="size_chart" name="size_chart" value="{{ old('size_chart') }}">
                             @if ($product->size_chart)
                                 <small>
-                                    Current: <a href="{{ asset('storage/' . $product->size_chart) }}" target="_blank">View</a>
+                                    Current: <a href="{{ asset('storage/' . $product->size_chart) }}"
+                                        target="_blank">View</a>
                                 </small>
                             @endif
                             @error('size_chart')
@@ -115,6 +116,65 @@
                                 <option value="0" {{ $product->status == 0 ? 'selected' : '' }}>Inactive</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div class="col-md-12 mt-5">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <h5 class="mb-0">{{ __('Volume Discount (Optional)') }}</h5>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" id="addMoreDiscountBtn"
+                                    class="add-new btn btn-sm btn-warning waves-effect waves-light">
+                                    <i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
+                                        class="d-none d-sm-inline-block">{{ __('Add') }}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Container for dynamic discount fields -->
+                        <div id="discountFieldsContainer">
+                            @forelse ($product->productVolumeDiscounts as $discount)
+                                <div class="row discount-group align-items-end">
+                                    <div class="col-md-5">
+                                        <div class="mb-3">
+                                            <label class="form-label">{{ __('Minimum Quantity') }}</label>
+                                            <input type="number" min="0" class="form-control" name="quantity[]"
+                                                value="{{ $discount->quantity }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="mb-3">
+                                            <label class="form-label">{{ __('Discount Percentage') }}</label>
+                                            <input type="number" min="0" max="100" class="form-control"
+                                                name="discount_percentage[]"
+                                                value="{{ $discount->discount_percentage }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button"
+                                            class="btn btn-danger btn-sm remove-discount">Remove</button>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="row discount-group align-items-end">
+                                    <div class="col-md-5">
+                                        <div class="mb-3">
+                                            <label class="form-label">{{ __('Minimum Quantity') }}</label>
+                                            <input type="number" min="0" class="form-control" name="quantity[]">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="mb-3">
+                                            <label class="form-label">{{ __('Discount Percentage') }}</label>
+                                            <input type="number" min="0" max="100" class="form-control"
+                                                name="discount_percentage[]">
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforelse
+                        </div>
+
                     </div>
 
                     <!-- Submit -->
@@ -135,6 +195,34 @@
                     .replace(/-+/g, '-');
                 $('#slug').val(slug);
             });
+        });
+
+        $('#addMoreDiscountBtn').click(function () {
+            let html = `
+                <div class="row discount-group align-items-end">
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label class="form-label">Minimum Quantity</label>
+                            <input type="number" min="0" class="form-control" name="quantity[]">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label class="form-label">Discount Percentage</label>
+                            <input type="number" min="0" max="100" class="form-control" name="discount_percentage[]">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger btn-sm remove-discount">Remove</button>
+                    </div>
+                </div>
+            `;
+            $('#discountFieldsContainer').append(html);
+        });
+
+        // Handle remove
+        $('#discountFieldsContainer').on('click', '.remove-discount', function () {
+            $(this).closest('.discount-group').remove();
         });
     </script>
 @endsection

@@ -30,6 +30,7 @@
                             <th>{{ __('Sr.') }}</th>
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Price') }}</th>
+                            <th>{{ __('Disc. (%)') }}</th>
                             <th>{{ __('Image') }}</th>
                             <th>{{ __('Created Date') }}</th>
                             <th>{{ __('Status') }}</th>
@@ -42,6 +43,7 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $bundle->name }}</td>
                                 <td>{{ $bundle->price }}</td>
+                                <td>{{ $bundle->discount_percentage }}%</td>
                                 <td><img style="height: 35px;" src="{{ asset('storage/' . $bundle->image) }}" alt=""></td>
                                 <td>{{ $bundle->created_at->format('Y-m-d') }}</td>
                                 <td>

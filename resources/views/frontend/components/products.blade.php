@@ -51,8 +51,15 @@
                         {{-- <div class="price-tag">
                             <h5><span>Starting at</span> {{ App\Helpers\Helper::formatCurrency($bundle->price) }}</h5>
                         </div> --}}
-                        <div class="price-tag">
-                            <h5 class="m-0">
+                        <div class="price-tag" style="background-color: #FF6600 !important;">
+                            {{-- Discount Badge --}}
+                            @if ($bundle->discount_percentage > 0)
+                                <div
+                                    class="discount-badge position-absolute top-0 end-0 bg-danger text-white d-flex align-items-center justify-content-center">
+                                    {{ $bundle->discount_percentage }}% <small>OFF</small>
+                                </div>
+                            @endif
+                            <h5 class="m-0" style="color: #fff !important;">
                                 <span>Starting at</span>
                                 @if ($bundle->discount_percentage > 0)
                                     @php
@@ -65,7 +72,7 @@
                                         <span class="fw-bold" style="font-size: inherit;">
                                             {{ App\Helpers\Helper::formatCurrency($discountedPrice) }}
                                         </span>
-                                        <span class="text-muted" style="text-decoration: line-through;">
+                                        <span style="font-size: 15px; color: white; text-decoration: line-through; text-decoration-color: red;">
                                             {{ App\Helpers\Helper::formatCurrency($bundle->price) }}
                                         </span>
                                     </div>

@@ -8,6 +8,7 @@ use App\Http\Requests\Cart\SubmitCartRequest;
 use App\Models\AttributeValue;
 use App\Models\Cart;
 use App\Models\CartContent;
+use App\Models\ProductVolumeDiscount;
 use App\Models\EcomAttributeImage;
 use App\Models\EcommerceAttribute;
 use App\Models\Product;
@@ -459,6 +460,8 @@ class CartController extends Controller
     public function ecomUpdate(Request $request, $id)
     {
         //return $request->all();
+        // dd($request->all());
+        Log::info($request->all());
         DB::beginTransaction();
 
         try {
@@ -525,42 +528,60 @@ class CartController extends Controller
                 }
             }
 
-            if ($existingCartContent) {
+            $productVolumeDiscounts = ProductVolumeDiscount::where('product_id', $request->product_id)->get();
+            $discountPercentage = 0;
+            Log::info('Product Volume Discounts: ' . json_encode($productVolumeDiscounts));
 
-                $contents = json_decode($existingCartContent->contents, true);
-                if ($existingCartContent->cart_id !== $previousCartContent->cart_id) {
-                    $contents['quantity'] += (int)$request->quantity;
-                } else {
-                    $contents['quantity'] = (int)$request->quantity;
-                }
+            // if ($existingCartContent) {
+            //     Log::info('Existing Cart Content: ' . json_encode($existingCartContent));
+            //     $contents = json_decode($existingCartContent->contents, true);
+            //     if ($existingCartContent->cart_id !== $previousCartContent->cart_id) {
+            //         $contents['quantity'] += (int)$request->quantity;
+            //     } else {
+            //         $contents['quantity'] = (int)$request->quantity;
+            //     }
 
-                $contents['cart_image'] = !empty($cart_images) ? $cart_images : ($contents['cart_image'] ?? []);
+            //     foreach ($productVolumeDiscounts as $discountItem) {
+            //         Log::info('Discount Item: ' . json_encode($discountItem));
+            //         if ($contents['quantity'] >= $discountItem->quantity) {
+            //             $discountPercentage = $discountItem->discount_percentage;
+            //             Log::info('Discount: ' . json_encode($discountItem->quantity));
+            //         }
+            //     }
 
-
-                $contents['note'] = $request->note ?? ($contents['note'] ?? $prev_note);
-                $existingCartContent->update([
-                    'contents' => json_encode($contents),
-                ]);
-
-                // Update total cost
-                $cartss = $existingCartContent->cart;
-                $cartss->total_cost += ((float)$request->price * (int)$request->quantity);
-                $cartss->save();
-
-                if ($existingCartContent->cart_id !== $previousCartContent->cart_id) {
-                    $cart->delete();
-                }
+            //     $contents['cart_image'] = !empty($cart_images) ? $cart_images : ($contents['cart_image'] ?? []);
 
 
-                DB::commit();
+            //     $contents['note'] = $request->note ?? ($contents['note'] ?? $prev_note);
+            //     $existingCartContent->update([
+            //         'contents' => json_encode($contents),
+            //     ]);
 
-                return response()->json([
-                    'status' => true,
-                    'data' => $existingCartContent->cart->sessionId,
-                    'message' => 'Cart updated successfully (quantity merged, old entry removed).'
-                ]);
-            } else {
+            //     $totalCost = 0;
+            //     $totalCost = $cart->total_cost + ((float)$request->price * (int)$request->quantity);
+            //     Log::info('Total Cost: ' . $totalCost);
+            //     $discountedCost = $totalCost * (($discountPercentage / 100));
 
+            //     // Update total cost
+            //     $cartss = $existingCartContent->cart;
+            //     $cartss->discount = $discountedCost;
+            //     $cartss->total_cost += ((float)$request->price * (int)$request->quantity);
+            //     $cartss->save();
+
+            //     if ($existingCartContent->cart_id !== $previousCartContent->cart_id) {
+            //         $cart->delete();
+            //     }
+
+
+            //     DB::commit();
+
+            //     return response()->json([
+            //         'status' => true,
+            //         'data' => $existingCartContent->cart->sessionId,
+            //         'message' => 'Cart updated successfully (quantity merged, old entry removed).'
+            //     ]);
+            // } else {
+                Log::info('New Cart Content');
                 $cart->contents()->delete(); // Delete previous entry
 
                 // Create new cart content
@@ -581,7 +602,20 @@ class CartController extends Controller
                     'contents' => json_encode($contentsData),
                 ]);
 
+                foreach ($productVolumeDiscounts as $discountItem) {
+                    Log::info('Discount Item: ' . json_encode($discountItem));
+                    if ($request->quantity >= $discountItem->quantity) {
+                        $discountPercentage = $discountItem->discount_percentage;
+                        Log::info('Discount: ' . json_encode($discountItem->quantity));
+                    }
+                }
+                $totalCost = 0;
+                $totalCost = ((float)$request->price * (int)$request->quantity);
+                Log::info('Total Cost: ' . $totalCost);
+                $discountedCost = $totalCost * (($discountPercentage / 100));
+
                 // Update cart total cost
+                $cart->discount = $discountedCost;
                 $totalCost = ((float)$request->price * (int)$request->quantity);
                 $cart->total_cost = $totalCost;
                 $cart->save();
@@ -593,7 +627,7 @@ class CartController extends Controller
                     'data' => $cart->sessionId,
                     'message' => 'Cart updated successfully (color/size changed).'
                 ]);
-            }
+            // }
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -621,6 +655,7 @@ class CartController extends Controller
     {
         //return
         // return $request->all();
+        // dd($request->all());
         DB::beginTransaction();
 
         try {
@@ -671,16 +706,36 @@ class CartController extends Controller
                 ->whereJsonContains('contents->siz_attr_id', $siz_attr->id)
                 ->first();
             //dd( $existingCartContent);
+            $productVolumeDiscounts = ProductVolumeDiscount::where('product_id', $request->product_id)->get();
+            $discountPercentage = 0;
+            Log::info('Product Volume Discounts: ' . json_encode($productVolumeDiscounts));
+
             if ($existingCartContent) {
                 // Update quantity
                 $contents = json_decode($existingCartContent->contents, true);
                 $contents['quantity'] += $request->quantity; // Increment quantity
 
+                foreach ($productVolumeDiscounts as $discountItem) {
+                    Log::info('Discount Item: ' . json_encode($discountItem));
+                    if ($contents['quantity'] >= $discountItem->quantity) {
+                        $discountPercentage = $discountItem->discount_percentage;
+                        Log::info('Discount: ' . json_encode($discountItem->quantity));
+                    }
+                }
+
                 $existingCartContent->update([
                     'contents' => json_encode($contents),
                 ]);
+
                 $cart = $existingCartContent->cart;
+
+                $totalCost = 0;
+                $totalCost = $cart->total_cost + ((float)$request->price * (int)$request->quantity);
+                Log::info('Total Cost: ' . $totalCost);
+                $discountedCost = $totalCost * (($discountPercentage / 100));
+
                 $cart->total_cost += ((float)$request->price * (int)$request->quantity);
+                $cart->discount = $discountedCost;
                 $cart->save();
                 DB::commit();
 
@@ -739,8 +794,17 @@ class CartController extends Controller
             ]);
             //dd( $cart_contents);
             $totalCost = ((float)$request->price * (int)$request->quantity);
+            foreach ($productVolumeDiscounts as $discountItem) {
+                Log::info('Discount Item: ' . json_encode($discountItem));
+                if ($request->quantity >= $discountItem->quantity) {
+                    $discountPercentage = $discountItem->discount_percentage;
+                    Log::info('Discount: ' . json_encode($discountItem->quantity));
+                }
+            }
+            $discountedCost = $totalCost * ($discountPercentage / 100);
 
             $cart->total_cost = $totalCost;
+            $cart->discount = $discountedCost;
             $cart->cartId = $cartId;
             $cart->save();
             DB::commit();

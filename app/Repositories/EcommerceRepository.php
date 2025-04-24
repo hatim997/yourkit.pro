@@ -28,7 +28,7 @@ class EcommerceRepository extends BaseRepository
         $color = [];
         $size = [];
 
-        $product = $this->model->where('productId', $productId)->first();
+        $product = $this->model->with('productVolumeDiscounts')->where('productId', $productId)->first();
         //dd($product->ecommerce);
         foreach ($product->ecommerce as $ecommerce) {
 
@@ -107,7 +107,7 @@ class EcommerceRepository extends BaseRepository
     $product = $this->model->create($data);
     if (!empty($data['size_chart']) && $data['size_chart']->isValid()) {
         $sizeChartFile = $this->uploadFile($data['size_chart'], "size_charts");
-        $product->size_chart = $sizeChartFile['file_path']; 
+        $product->size_chart = $sizeChartFile['file_path'];
     }
     foreach ($data['attribute'] as $arrtibute) {
         $ecomData = [
@@ -122,14 +122,14 @@ class EcommerceRepository extends BaseRepository
 
         $ecommerceAttribute = $product->ecommerce()->create($ecomData);
 
-        
+
         if (!empty($arrtibute['image']) && is_array($arrtibute['image'])) {
             $imagePaths = [];
 
             foreach ($arrtibute['image'] as $imageFile) {
                 if ($imageFile->isValid()) {
                     $file = $this->uploadFile($imageFile, "ecommerce");
-                   
+
                     EcomAttributeImage::create([
                         'ecommerce_attribute_id' => $ecommerceAttribute->id,
                         'image' => $file['file_path'],

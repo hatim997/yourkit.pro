@@ -66,5 +66,9 @@ class Product extends Model
     {
         return $this->hasMany(EcommerceAttribute::class, 'product_id', 'id');
     }
+    public function productVolumeDiscounts(): HasMany
+    {
+        return $this->hasMany(ProductVolumeDiscount::class, 'product_id');
+    }
 
 }

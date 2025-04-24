@@ -71,12 +71,13 @@
                 <div class="col-lg-7 col-md-12 col-sm-12">
                     <form id="addCart">
                         @csrf
-
                         <div class="service-dtls-text">
                             <h3>{{ $product->name }}</h3>
                             {{-- <p>{{ $product->description }}</p> --}}
                             <div class="price">
-                                <h5>${{ $product->ecommerce()->first()->price }}</h5>
+                                <h5 id="product-price-display">
+                                    ${{ $product->ecommerce()->first()->price }}
+                                </h5>
                             </div>
                             <div class="service-steps">
                                 <h5>COLOR</h5>
@@ -122,7 +123,8 @@
                                         <option value="9">9</option>
                                         <option value="10">10</option>
                                     </select> --}}
-                                    <input type="number" class="form-control" name="quantity" id="quantitySelector" value="1" min="1" max="9999">
+                                    <input type="number" class="form-control" name="quantity" id="quantitySelector"
+                                        value="1" min="1" max="9999">
 
                                     {{-- <button class="btn btn-outline-warning" type="submit">Add to
                                         Cart</button> --}}
@@ -130,6 +132,9 @@
                                         data-bs-target="#cartModal">
                                         Add to Cart
                                     </button>
+                                </div>
+
+                                <div id="volume-discount-message" style="margin-top: 10px; font-weight: 500; color: green;">
                                 </div>
                             </div>
                             <div class="view-size-chart-wrap">
@@ -202,6 +207,7 @@
                             <textarea class="form-control" name="note" id="note" cols="30" rows="2"
                                 placeholder="Please specify the positioning of the logo print."></textarea>
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <input type="hidden" name="discount" id="discount" value="0">
                             <input type="hidden" name="color">
                             <input type="hidden" name="size">
                             <input type="hidden" name="price">
@@ -322,14 +328,14 @@
 
 
 
-                            if (response.status) {
-                                localStorage.setItem('sessionId', JSON.stringify(response
-                                    .data));
-                                window.location.href = "{{ route('frontend.cart') }}";
-                            }else{
+                        if (response.status) {
+                            localStorage.setItem('sessionId', JSON.stringify(response
+                                .data));
+                            window.location.href = "{{ route('frontend.cart') }}";
+                        } else {
 
-                           toastr.error(response.message, 'Error');
-                       }
+                            toastr.error(response.message, 'Error');
+                        }
                     },
                     // error: function(error) {
 
@@ -337,24 +343,83 @@
                     //     console.error('Error:', error);
                     // }
                     error: function(xhr) {
-            let response = xhr.responseJSON;
-            if (response && response.errors) {
-                if (response.errors.color) {
-                    toastr.error(response.errors.color[0], 'Error');
-                }
-                if (response.errors.size) {
-                    toastr.error(response.errors.size[0], 'Error');
-                }
-            } else {
-                toastr.error('Failed to add product to cart. Please try again.', 'Error');
-            }
-        }
+                        let response = xhr.responseJSON;
+                        if (response && response.errors) {
+                            if (response.errors.color) {
+                                toastr.error(response.errors.color[0], 'Error');
+                            }
+                            if (response.errors.size) {
+                                toastr.error(response.errors.size[0], 'Error');
+                            }
+                        } else {
+                            toastr.error('Failed to add product to cart. Please try again.',
+                                'Error');
+                        }
+                    }
                 });
             });
         });
     </script>
 
     <script>
+        $(document).ready(function() {
+            const discounts = @json($product->productVolumeDiscounts);
+            const originalPrice = parseFloat({{ $product->ecommerce()->first()->price }});
+
+            function updateDiscountMessage(quantity) {
+                let discountApplied = null;
+                let nextDiscount = null;
+
+                // Sort discounts by quantity ascending
+                discounts.sort((a, b) => a.quantity - b.quantity);
+
+                for (let i = 0; i < discounts.length; i++) {
+                    const d = discounts[i];
+
+                    if (quantity >= d.quantity) {
+                        discountApplied = d;
+                    } else {
+                        nextDiscount = d;
+                        break;
+                    }
+                }
+
+                // Display discounted price if applicable
+                if (discountApplied) {
+                    const discountPercent = discountApplied.discount_percentage;
+                    const discountValue = (originalPrice * (discountPercent / 100)).toFixed(2);
+                    const discountedPrice = (originalPrice - (originalPrice * (discountPercent / 100))).toFixed(2);
+
+                    $('#product-price-display').html(
+                        `$${discountedPrice} <span style="text-decoration: line-through; color: #999; font-size: 16px; margin-left: 5px;">$${originalPrice.toFixed(2)}</span> <span style="color: #d00; font-size: 14px;">(${discountPercent.toFixed(2)}% off)</span>`
+                    );
+                    $('#discount').val(discountValue);
+                } else {
+                    $('#product-price-display').html(`$${originalPrice.toFixed(2)}`);
+                    $('#discount').val(0);
+                }
+
+
+                // Show message to reach next discount tier
+                if (nextDiscount) {
+                    const qtyNeeded = nextDiscount.quantity - quantity;
+                    $('#volume-discount-message').html(
+                        `Buy ${qtyNeeded} more to get ${nextDiscount.discount_percentage.toFixed(2)}% off!`);
+                } else {
+                    $('#volume-discount-message').html('');
+                }
+            }
+
+            $('#quantitySelector').on('input change', function() {
+                const quantity = parseInt($(this).val());
+                if (quantity >= 1) {
+                    updateDiscountMessage(quantity);
+                }
+            });
+
+            // Initial trigger on page load
+            updateDiscountMessage(parseInt($('#quantitySelector').val()));
+        });
         document.addEventListener('DOMContentLoaded', () => {
             let selectedColor = null;
             let currentSelectedColor = null;
@@ -559,16 +624,16 @@
                                 currentSelectedColor = null;
                                 currentSelectedSize = null;
                                 //selectedColor = currentSelectedColor;
-                               // selectedSize = currentSelectedSize;
+                                // selectedSize = currentSelectedSize;
 
-                               document.querySelector('.product-big-slider').innerHTML = '';
-    document.querySelector('.product-thumbnail-slider').innerHTML = '';
+                                document.querySelector('.product-big-slider').innerHTML = '';
+                                document.querySelector('.product-thumbnail-slider').innerHTML = '';
 
-    // **Remove product price**
-    document.querySelector('.price h5').textContent = '';
+                                // **Remove product price**
+                                document.querySelector('.price h5').textContent = '';
 
-    // Optionally clear input field for price
-    document.querySelector('input[name="price"]').value = '';
+                                // Optionally clear input field for price
+                                document.querySelector('input[name="price"]').value = '';
 
 
                             }

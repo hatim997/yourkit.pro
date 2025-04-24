@@ -92,8 +92,8 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="size_chart" class="form-label">Size Chart <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control @error('size_chart') is-invalid @enderror" id="size_chart"
-                                name="size_chart" value="{{ old('size_chart') }}" required>
+                            <input type="file" class="form-control @error('size_chart') is-invalid @enderror"
+                                id="size_chart" name="size_chart" value="{{ old('size_chart') }}" required>
                             @error('size_chart')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -124,7 +124,8 @@
                             <tbody>
                                 <tr id="row_0">
                                     <td>
-                                        <select class="form-select select2" name="attribute[0][size]" id="size_0" required="">
+                                        <select class="form-select select2" name="attribute[0][size]" id="size_0"
+                                            required="">
                                             <option value="" selected disabled>Select Value</option>
                                             @foreach ($sizeAttributes->attributeValues as $sz)
                                                 <option value="{{ $sz->id }}">{{ $sz->value }}</option>
@@ -133,22 +134,61 @@
                                     </td>
 
                                     <td>
-                                        <select class="form-select select2" name="attribute[0][color]" id="color_0" required="">
+                                        <select class="form-select select2" name="attribute[0][color]" id="color_0"
+                                            required="">
                                             <option value="" selected disabled>Select Value</option>
                                             @foreach ($colorAttributes->attributeValues as $cl)
-                                                <option value="{{ $cl->id }}" style="background-color: {{ $cl->value }}">
+                                                <option value="{{ $cl->id }}"
+                                                    style="background-color: {{ $cl->value }}">
                                                     {{ $cl->value }}</option>
                                             @endforeach
                                         </select>
                                     </td>
-                                    <td><input class="form-control" type="number" name="attribute[0][price]" required></td>
-                                    <td><input class="form-control" type="number" name="attribute[0][quantity]" required></td>
-                                    <td><input class="form-control" type="file" name="attribute[0][image][]" accept="image/*" multiple></td>
-                                    <td><button type="button" class="btn btn-warning btn-sm addRow"><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i> Add</button></td>
+                                    <td><input class="form-control" type="number" name="attribute[0][price]" required>
+                                    </td>
+                                    <td><input class="form-control" type="number" name="attribute[0][quantity]"
+                                            required></td>
+                                    <td><input class="form-control" type="file" name="attribute[0][image][]"
+                                            accept="image/*" multiple></td>
+                                    <td><button type="button" class="btn btn-warning btn-sm addRow"><i
+                                                class="ti ti-plus me-0 me-sm-1 ti-xs"></i> Add</button></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                    <div class="col-md-12 mt-5">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <h5 class="mb-0">{{ __('Volume Discount (Optional)') }}</h5>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" id="addMoreDiscountBtn"
+                                    class="add-new btn btn-sm btn-warning waves-effect waves-light">
+                                    <i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
+                                        class="d-none d-sm-inline-block">{{ __('Add') }}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Container for dynamic discount fields -->
+                        <div id="discountFieldsContainer">
+                            <div class="row discount-group">
+                                <div class="col-md-5">
+                                    <div class="mb-3">
+                                        <label class="form-label">{{ __('Minimum Quantity') }}</label>
+                                        <input type="number" min="0" class="form-control" name="quantity[]">
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="mb-3">
+                                        <label class="form-label">{{ __('Discount Percentage') }}</label>
+                                        <input type="number" min="0" max="100" class="form-control" name="discount_percentage[]">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-6 mt-3">
                         <button type="submit" class="btn btn-primary">Add Ecommerce Product</button>
                     </div>
@@ -192,7 +232,8 @@
 
             $('.addRow').on('click', function() {
                 let html = '<tr id="row_' + counter +
-                    '"><td><select class="form-select select2" name="attribute[' + counter + '][size]" id="size_' +
+                    '"><td><select class="form-select select2" name="attribute[' + counter +
+                    '][size]" id="size_' +
                     counter + '" required=""><option value="">Select Value</option>' + sizeOption +
                     '</select></td><td><select class="form-select select2" name="attribute[' + counter +
                     '][color]" id="color_' + counter +
@@ -224,5 +265,55 @@
 
             row.remove();
         });
+
+        $('#addMoreDiscountBtn').on('click', function() {
+            // Append a new row
+            $('#discountFieldsContainer').append(`
+                <div class="row discount-group">
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label class="form-label">Minimum Quantity</label>
+                            <input type="number" min="0" class="form-control" name="quantity[]">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label class="form-label">Discount Percentage</label>
+                            <input type="number" min="0" max="100" class="form-control" name="discount_percentage[]">
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button type="button" class="btn btn-danger btn-sm remove-discount">Remove</button>
+                    </div>
+                </div>
+            `);
+
+            updateRemoveButtons();
+        });
+
+        // Remove discount group
+        $('#discountFieldsContainer').on('click', '.remove-discount', function() {
+            $(this).closest('.discount-group').remove();
+            updateRemoveButtons();
+        });
+
+        // Show/remove buttons based on count
+        function updateRemoveButtons() {
+            const allGroups = $('#discountFieldsContainer .discount-group');
+
+            // Remove any existing remove buttons
+            allGroups.find('.remove-discount').parent().remove();
+
+            if (allGroups.length > 1) {
+                // Add Remove button to each group
+                allGroups.each(function() {
+                    $(this).append(`
+                <div class="col-md-2 d-flex align-items-center">
+                    <button type="button" class="btn btn-danger btn-sm remove-discount">Remove</button>
+                </div>
+            `);
+                });
+            }
+        }
     </script>
 @endsection

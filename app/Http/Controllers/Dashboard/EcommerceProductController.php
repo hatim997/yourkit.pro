@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\EcomAttributeImage;
 use App\Models\EcommerceAttribute;
 use App\Models\Product;
+use App\Models\ProductVolumeDiscount;
 use App\Models\SubCategory;
 use App\Traits\FileUploadTraits;
 use Illuminate\Http\Request;
@@ -68,6 +69,10 @@ class EcommerceProductController extends Controller
             'subcategory_id' => 'required|exists:sub_categories,id',
             'status' => 'required|in:1,0',
             'size_chart' => 'required|file|max_size',
+            'quantity' => 'nullable|array',
+            'quantity.*' => 'integer|min:0',
+            'discount_percentage' => 'nullable|array',
+            'discount_percentage.*' => 'integer|min:0|max:100',
         ]);
 
         if ($validator->fails()) {
@@ -125,6 +130,17 @@ class EcommerceProductController extends Controller
             $product->productId = generateUUID();
             $product->save();
 
+            if(isset($request->quantity) && count($request->quantity) > 0)
+            {
+                foreach ($request->quantity as $key => $quantity) {
+                    $productVolumeDiscount = new ProductVolumeDiscount();
+                    $productVolumeDiscount->product_id = $product->id;
+                    $productVolumeDiscount->quantity = $quantity;
+                    $productVolumeDiscount->discount_percentage = $request->discount_percentage[$key] ?? '0';
+                    $productVolumeDiscount->save();
+                }
+            }
+
             DB::commit();
             return redirect()->route('dashboard.ecommerce-products.index')->with('success', 'Ecommerce Product Added Successfully');
         } catch (\Throwable $th) {
@@ -152,7 +168,7 @@ class EcommerceProductController extends Controller
             $this->authorize('update ecommerce product');
             $categories = Category::where('status', 1)->get();
             $subcategories = SubCategory::where('status', 1)->get();
-            $product = Product::with('ecommerce')->findOrFail($id);
+            $product = Product::with('ecommerce','productVolumeDiscounts')->findOrFail($id);
             return view('dashboard.ecommerce-product.edit', compact('categories','subcategories','product'));
         } catch (\Throwable $th) {
             Log::error('Ecommerce Product Edit Failed', ['error' => $th->getMessage()]);
@@ -175,6 +191,10 @@ class EcommerceProductController extends Controller
             'subcategory_id' => 'required|exists:sub_categories,id',
             'status' => 'required|in:1,0',
             'size_chart' => 'nullable|file|max_size',
+            'quantity' => 'nullable|array',
+            'quantity.*' => 'integer|min:0',
+            'discount_percentage' => 'nullable|array',
+            'discount_percentage.*' => 'integer|min:0|max:100',
         ]);
 
         if ($validator->fails()) {
@@ -199,6 +219,18 @@ class EcommerceProductController extends Controller
                 Log::info('File uploaded successfully', ['file' => $sizeChartFile]);
             }
             $product->save();
+
+            if(isset($request->quantity) && count($request->quantity) > 0)
+            {
+                ProductVolumeDiscount::where('product_id', $product->id)->delete();
+                foreach ($request->quantity as $key => $quantity) {
+                    $productVolumeDiscount = new ProductVolumeDiscount();
+                    $productVolumeDiscount->product_id = $product->id;
+                    $productVolumeDiscount->quantity = $quantity;
+                    $productVolumeDiscount->discount_percentage = $request->discount_percentage[$key] ?? '0';
+                    $productVolumeDiscount->save();
+                }
+            }
 
             DB::commit();
             return redirect()->route('dashboard.ecommerce-products.index')->with('success', 'Ecommerce Product Updated Successfully');
