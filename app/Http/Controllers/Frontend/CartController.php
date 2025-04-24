@@ -68,7 +68,7 @@ class CartController extends Controller
                     <h5>Total</h5>
                 </div>';
             foreach ($carts as $cart) {
-
+                Log::info('Cart ' . $cart);
                 $totalDiscountedAmount = $cart->total_cost - $cart->discount;
                 $total = $total + $totalDiscountedAmount;
                 if ($cart->table == 'bundles') {
@@ -109,8 +109,10 @@ class CartController extends Controller
                         <div class="product-lft-prt">';
 
                     if (isset($cart->contents)) {
+                        // dd($cart->contents);
+                        Log::info('Cart Contents ' . $cart->contents);
                         foreach ($cart->contents as $content) {
-
+                            Log::info('Cart Content Product ' . $content->product);
 
                             $attrContents = json_decode($content->contents);
                             $countattrContents = count(json_decode($content->contents, true));
@@ -138,6 +140,25 @@ class CartController extends Controller
 
                             foreach ($content->position_images as $image) {
                                 $html .= '<span class="avater-img"><img src="' . $image . '" alt=""></span>';
+                            }
+
+                            // if($cart->is_phone_on_hoodie == 1 && $content->product->sub_category_id == 2){
+                            //     $html .= '<li><strong>Phone Number Printing</strong></li>';
+                            // }
+
+                            // if($cart->is_email_on_hoodie == 1 && $content->product->sub_category_id == 2){
+                            //     $html .= '<li><strong>Email Printing</strong></li>';
+                            // }
+                            if (($cart['is_phone_on_t-shirt'] == 1 && $content->product->sub_category_id == 1) ||
+                                ($cart['is_phone_on_hoodie'] == 1 && $content->product->sub_category_id == 2)
+                            ) {
+                                $html .= '<li><strong>Extra Phone Number Printing on ' . ($content->product->sub_category_id == 1 ? 'T-shirt' : 'Hoodie') . '</strong></li>';
+                            }
+
+                            if (($cart['is_email_on_t-shirt'] == 1 && $content->product->sub_category_id == 1) ||
+                                ($cart['is_email_on_hoodie'] == 1 && $content->product->sub_category_id == 2)
+                            ) {
+                                $html .= '<li><strong>Extra Email Printing on ' . ($content->product->sub_category_id == 1 ? 'T-shirt' : 'Hoodie') . '</strong></li>';
                             }
 
 
@@ -581,52 +602,52 @@ class CartController extends Controller
             //         'message' => 'Cart updated successfully (quantity merged, old entry removed).'
             //     ]);
             // } else {
-                Log::info('New Cart Content');
-                $cart->contents()->delete(); // Delete previous entry
+            Log::info('New Cart Content');
+            $cart->contents()->delete(); // Delete previous entry
 
-                // Create new cart content
-                $contentsData = [
-                    'quantity' => $request->quantity,
-                    'image' => $request->image,
-                    'color' => $request->color,
-                    'col_attr_id' => $col_attr->id,
-                    'size' => $request->size,
-                    'siz_attr_id' => $siz_attr->id,
-                    'cart_image' => $cart_images,
-                    'note' => $request->note ?? $prev_note,
-                ];
+            // Create new cart content
+            $contentsData = [
+                'quantity' => $request->quantity,
+                'image' => $request->image,
+                'color' => $request->color,
+                'col_attr_id' => $col_attr->id,
+                'size' => $request->size,
+                'siz_attr_id' => $siz_attr->id,
+                'cart_image' => $cart_images,
+                'note' => $request->note ?? $prev_note,
+            ];
 
-                $cart_contents = CartContent::create([
-                    'cart_id' => $cart->id,
-                    'product_id' => $request->product_id,
-                    'contents' => json_encode($contentsData),
-                ]);
+            $cart_contents = CartContent::create([
+                'cart_id' => $cart->id,
+                'product_id' => $request->product_id,
+                'contents' => json_encode($contentsData),
+            ]);
 
-                foreach ($productVolumeDiscounts as $discountItem) {
-                    Log::info('Discount Item: ' . json_encode($discountItem));
-                    if ($request->quantity >= $discountItem->quantity) {
-                        $discountPercentage = $discountItem->discount_percentage;
-                        Log::info('Discount: ' . json_encode($discountItem->quantity));
-                    }
+            foreach ($productVolumeDiscounts as $discountItem) {
+                Log::info('Discount Item: ' . json_encode($discountItem));
+                if ($request->quantity >= $discountItem->quantity) {
+                    $discountPercentage = $discountItem->discount_percentage;
+                    Log::info('Discount: ' . json_encode($discountItem->quantity));
                 }
-                $totalCost = 0;
-                $totalCost = ((float)$request->price * (int)$request->quantity);
-                Log::info('Total Cost: ' . $totalCost);
-                $discountedCost = $totalCost * (($discountPercentage / 100));
+            }
+            $totalCost = 0;
+            $totalCost = ((float)$request->price * (int)$request->quantity);
+            Log::info('Total Cost: ' . $totalCost);
+            $discountedCost = $totalCost * (($discountPercentage / 100));
 
-                // Update cart total cost
-                $cart->discount = $discountedCost;
-                $totalCost = ((float)$request->price * (int)$request->quantity);
-                $cart->total_cost = $totalCost;
-                $cart->save();
+            // Update cart total cost
+            $cart->discount = $discountedCost;
+            $totalCost = ((float)$request->price * (int)$request->quantity);
+            $cart->total_cost = $totalCost;
+            $cart->save();
 
-                DB::commit();
+            DB::commit();
 
-                return response()->json([
-                    'status' => true,
-                    'data' => $cart->sessionId,
-                    'message' => 'Cart updated successfully (color/size changed).'
-                ]);
+            return response()->json([
+                'status' => true,
+                'data' => $cart->sessionId,
+                'message' => 'Cart updated successfully (color/size changed).'
+            ]);
             // }
         } catch (\Exception $e) {
             DB::rollBack();
@@ -843,7 +864,7 @@ class CartController extends Controller
         }
         return response()->json([
             'success' => true,
-            'message' => 'Promo code applied. You got '.$promoCode->discount_percentage.'% off!',
+            'message' => 'Promo code applied. You got ' . $promoCode->discount_percentage . '% off!',
             'discount_percentage' => $promoCode->discount_percentage,
             'promo_code_id' => $promoCode->id,
         ]);
