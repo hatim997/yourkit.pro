@@ -6,6 +6,26 @@
         </div>
 
         <div class="row mt-5">
+            @php
+                // Step 1: Collect all color values for each product
+                $productColors = collect($bundle->products)->map(function ($product) {
+                    return collect($product->color)
+                        ->pluck('value')
+                        ->map(function ($v) {
+                            return strtolower(trim($v));
+                        })
+                        ->unique();
+                });
+
+                // Step 2: Find common colors across all products
+                $commonColors = $productColors
+                    ->reduce(function ($carry, $colors) {
+                        return $carry === null ? $colors : $carry->intersect($colors);
+                    }, null)
+                    ->values()
+                    ->toArray(); // Reset keys
+            @endphp
+
 
             @empty(!$bundle->products)
 
@@ -48,7 +68,7 @@
                                 <label for="select-color">Select Color</label>
                                 <div class="color-selector">
                                     @isset($product->color)
-                                        @php
+                                        {{-- @php
                                             // Sort product colors according to master order
                                             $sortedColors = collect($product->color)
                                                 ->sortBy(function ($color) use ($allColors) {
@@ -59,7 +79,18 @@
                                                     return $index !== false ? $index : 999; // put unknown colors at end
                                                 })
                                                 ->values(); // reset keys
+                                        @endphp --}}
+                                        @php
+                                            // Sort product colors: common first, then the rest
+                                            $sortedColors = collect($product->color)
+                                                ->sortBy(function ($color) use ($commonColors) {
+                                                    $value = strtolower(trim($color->value));
+                                                    $index = array_search($value, $commonColors);
+                                                    return $index !== false ? $index : 999; // Common colors first
+                                                })
+                                                ->values();
                                         @endphp
+
                                         {{-- @foreach ($product->color as $key2 => $color)
                                             <div data-attrval="{{ $color->attr_id }}" data-color="{{ $color->value }}"
                                                 data-prid="{{ $product->id }}" data-key="{{ $key }}"
@@ -208,6 +239,9 @@
                 console.log('Color Attribute ID:', colorAttrValue);
                 console.log('Image:', image);
             });
+
+            // Fix: Trigger click on the default active color to populate inputs
+            $('.color-selector .entry.active').trigger('click');
 
             $('.productquant-{{ $product->id }}').on('change', function() {
                 updateRemaining($(this).data('productid'));
