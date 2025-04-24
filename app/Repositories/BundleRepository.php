@@ -22,9 +22,14 @@ class BundleRepository extends BaseRepository
 
     public function getBundleProduct($limit = 0)
     {
+        // $bundle = Bundle::with(['products' => function($query) {
+        //     $query->where('products.status', '1');
+        // }]);
         $bundle = Bundle::with(['products' => function($query) {
-            $query->where('products.status', '1'); 
-        }]);
+            $query->where('products.status', '1');
+        }])
+        ->where('status', 1) // Apply status filter on the query
+        ->orderBy('position', 'asc');
         if ($limit > 0) {
             $bundle->limit($limit);
         }
@@ -62,7 +67,7 @@ class BundleRepository extends BaseRepository
 
         $bundle = Bundle::where('uuid', $uuid)
         ->with(['products' => function ($query) {
-            $query->where('products.status', 1) 
+            $query->where('products.status', 1)
                   ->with(['color', 'size']);
         }])
         ->first();
@@ -115,7 +120,7 @@ class BundleRepository extends BaseRepository
                 $subCategoryArray[] = $product->sub_category_id;
 
                 ProductBundle::create([
-                    'product_id' => $item['product_id'], 
+                    'product_id' => $item['product_id'],
                     'bundle_id' => $bundle->id,
                     'quantity' => $item['quantity']
                 ]);
@@ -153,7 +158,7 @@ class BundleRepository extends BaseRepository
                 $subCategoryArray[] = $product->sub_category_id;
 
                 ProductBundle::create([
-                    'product_id' => $item['product_id'], 
+                    'product_id' => $item['product_id'],
                     'bundle_id' => $bundle->id,
                     'quantity' => $item['quantity']
                 ]);

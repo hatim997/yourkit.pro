@@ -23,11 +23,56 @@ class KitProductBundleController extends Controller
     {
         try {
             $this->authorize('view kit product bundle');
-            $bundles = Bundle::get();
+            $bundles = Bundle::orderBy('position', 'asc')->get();
             return view('dashboard.kit-product-bundle.index', compact('bundles'));
         } catch (\Throwable $th) {
             Log::error('Kit Product Bundle Index Failed', ['error' => $th->getMessage()]);
             return redirect()->back()->with('error', "Something went wrong! Please try again later");
+            throw $th;
+        }
+    }
+
+    public function shuffleShow()
+    {
+        try {
+            // dd('kk');
+            $this->authorize('view kit product bundle');
+            $bundles = Bundle::orderBy('position', 'asc')->get();
+            return view('dashboard.kit-product-bundle.shuffle', compact('bundles'));
+        } catch (\Throwable $th) {
+            Log::error('Kit Product Bundle Shuffle Show Failed', ['error' => $th->getMessage()]);
+            return redirect()->back()->with('error', "Something went wrong! Please try again later");
+            throw $th;
+        }
+    }
+    public function shuffleStore(Request $request)
+    {
+        $this->authorize('update kit product bundle');
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array',
+            'ids.*' => 'exists:bundles,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation Error!',
+            ], 404);
+        }
+        try {
+            foreach ($request->ids as $index => $bundleId) {
+                Bundle::where('id', $bundleId)->update(['position' => $index + 1]);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Bundles Shuffled Successfully!',
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::error('Kit Product Bundle Shuffle Store Failed', ['error' => $th->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong! Please try again later',
+            ], 404);
             throw $th;
         }
     }
@@ -78,6 +123,8 @@ class KitProductBundleController extends Controller
             $bundle->status = $request->status;
             $bundle->subcategories = '[]';
             $bundle->max_quantity = '0';
+            $maxPosition = Bundle::max('position');
+            $bundle->position = $maxPosition ? $maxPosition + 1 : 1;
             if ($request->hasFile('image')) {
                 $file = $this->uploadFile($request['image'], "bundles");
                 $bundle->image = $file['file_path'];
@@ -219,6 +266,8 @@ class KitProductBundleController extends Controller
         try {
             $this->authorize('delete kit product bundle');
             $bundle = Bundle::with('products')->findOrFail($id);
+            $deletedPosition = $bundle->position;
+
             if ($bundle->products) {
                 foreach ($bundle->products as $item) {
                     $item->delete();
@@ -227,6 +276,10 @@ class KitProductBundleController extends Controller
             if ($bundle->image && Storage::exists($bundle->image)) {
                 Storage::delete($bundle->image);
             }
+
+            // Adjust positions of remaining bundles
+            Bundle::where('position', '>', $deletedPosition)
+                ->decrement('position');
             $bundle->delete();
             return redirect()->back()->with('success', 'Kit Product Bundle Deleted Successfully!');
         } catch (\Throwable $th) {

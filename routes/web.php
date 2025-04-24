@@ -190,6 +190,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             //Kit Product Bundles
             Route::resource('kit-product-bundles', KitProductBundleController::class);
+            Route::get('kit-product-bundles/shuffle/show', [KitProductBundleController::class, 'shuffleShow'])->name('kit-product-bundles.shuffle-show');
+            Route::post('kit-product-bundles/shuffle/store', [KitProductBundleController::class, 'shuffleStore'])->name('kit-product-bundles.shuffle-store');
 
             //Banner
             Route::resource('banners', BannerController::class);

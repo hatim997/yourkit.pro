@@ -22,6 +22,12 @@
                             class="d-none d-sm-inline-block">{{ __('Add New Product Bundle') }}</span>
                     </a>
                 @endcan
+                @canany(['update kit product bundle'])
+                    <a href="{{route('dashboard.kit-product-bundles.shuffle-show')}}" class="add-new btn btn-warning waves-effect waves-light">
+                        <i class="ti ti-arrows-shuffle me-0 me-sm-1 ti-xs"></i><span
+                            class="d-none d-sm-inline-block">{{ __('Shuffle Bundles') }}</span>
+                    </a>
+                @endcan
             </div>
             <div class="card-datatable table-responsive">
                 <table class="datatables-users table border-top custom-datatables">
