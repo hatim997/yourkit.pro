@@ -71,7 +71,7 @@
                                 <option value="" disabled>{{ __('Select Sub Category') }}</option>
                                 @foreach ($subcategories as $subcategory)
                                     <option value="{{ $subcategory->id }}"
-                                        {{ $kitProduct->subcategory_id == $subcategory->id ? 'selected' : '' }}>
+                                        {{ $kitProduct->sub_category_id == $subcategory->id ? 'selected' : '' }}>
                                         {{ $subcategory->name }}
                                     </option>
                                 @endforeach
