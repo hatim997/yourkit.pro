@@ -164,7 +164,7 @@
                                             <select class="form-select" disabled>
                                                 @foreach ($colorAttributes->attributeValues as $clr)
                                                     <option value="{{ $clr->id }}"
-                                                        {{ $clr->id == $color->pivot->value ? 'selected' : '' }}>{{ $clr->value }}
+                                                        {{ $clr->id == $color->pivot->value ? 'selected' : '' }}>{{ $clr->value_name }} ({{ $clr->value }})
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -215,7 +215,7 @@
                             <select name="color_id[]" class="select2 form-select">
                                 <option disabled selected>Select Color</option>
                                 @foreach ($colorAttributes->attributeValues as $color)
-                                    <option value="{{ $color->id }}">{{ $color->value }}</option>
+                                    <option value="{{ $color->id }}">{{ $color->value_name }} ({{ $color->value }})</option>
                                 @endforeach
                             </select>
                         </div>

@@ -28,6 +28,16 @@
                                 </div>
                             </div>
                             @if ($attribute->id == '2')
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="value_name_edit" class="form-label">Color Name</label>
+                                        <input type="text" class="form-control @error('value_name_edit') is-invalid @enderror"
+                                            id="value_name_edit" placeholder="i.e. Red, Blue, etc" name="value_name_edit" value="{{ old('value_name_edit') }}" required>
+                                        @error('value_name_edit')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <div class="col-md-8">
                                     <div class="mb-3">
                                         <label for="value_edit" class="form-label">Value (Hex Code)</label>

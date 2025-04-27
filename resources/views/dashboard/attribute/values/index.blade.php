@@ -34,6 +34,9 @@
                         <tr>
                             <th>{{ __('Sr.') }}</th>
                             <th>{{ __('Value') }}</th>
+                            @if ($attribute->id == '2')
+                            <th>{{ __('Value Name') }}</th>
+                            @endif
                             <th>{{ __('Attribute') }}</th>
                             <th>{{ __('Created Date') }}</th>
                             <th>{{ __('Status') }}</th>
@@ -52,6 +55,9 @@
                                         <span>{{ $value->value }}</span>
                                     </div>
                                 </td>
+                                @if ($attribute->id == '2')
+                                    <td>{{ $value->value_name }}</td>
+                                @endif
                                 <td>{{ $value->attribute->type }}</td>
                                 <td>{{ $value->created_at->format('Y-m-d') }}</td>
                                 <td>
@@ -78,7 +84,7 @@
                                                 <button data-bs-toggle="modal" data-bs-target="#modalCenterEdit"
                                                     class="btn btn-icon btn-text-primary waves-effect waves-light rounded-pill me-1 editBtn"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" data-id="{{ $value->id }}"
-                                                    data-value="{{ $value->value }}" title="{{ __('Edit Attribute Value') }}">
+                                                    data-value="{{ $value->value }}" data-value_name="{{ $value->value_name }}" title="{{ __('Edit Attribute Value') }}">
                                                     <i class="ti ti-edit ti-md"></i>
                                                 </button>
                                             </span>
@@ -207,6 +213,10 @@
 
                 // Set the value
                 $('#modalCenterEdit input[name="value_edit"]').val(value);
+                @if ($attribute->id == '2')
+                    var value_name = $(this).data('value_name');
+                    $('#modalCenterEdit input[name="value_name_edit"]').val(value_name);
+                @endif
 
                 // Update the form action
                 var updateUrl = "{{ url('admin/dashboard/attribute-values') }}/" + id;

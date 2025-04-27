@@ -140,7 +140,7 @@
                                             @foreach ($colorAttributes->attributeValues as $cl)
                                                 <option value="{{ $cl->id }}"
                                                     style="background-color: {{ $cl->value }}">
-                                                    {{ $cl->value }}</option>
+                                                    {{ $cl->value_name }}</option>
                                             @endforeach
                                         </select>
                                     </td>
@@ -223,7 +223,7 @@
 
             $.each(colors, function(cl, color) {
                 colorOption += '<option value="' + color.id + '"style="background-color: ' + color.value +
-                    '">' + color.value + '</option>';
+                    '">' + color.value_name + '</option>';
             });
 
             $('#variantTable').on('click', '.removeRow', function() {

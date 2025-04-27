@@ -172,7 +172,7 @@
                                                     @foreach ($colorAttributes->attributeValues as $color)
                                                         <option value="{{ $color->id }}"
                                                             {{ is_array(old('color_id')) && in_array($color->id, old('color_id')) ? 'selected' : '' }}>
-                                                            {{ $color->value }}
+                                                            {{ $color->value_name }} ({{ $color->value }})
                                                         </option>
                                                     @endforeach
                                                 @endif
@@ -236,7 +236,7 @@
                                 <select name="color_id[]" class="select2 form-select">
                                     <option value="" selected disabled>Select Color</option>
                                     @foreach ($colorAttributes->attributeValues as $color)
-                                        <option value="{{ $color->id }}">{{ $color->value }}</option>
+                                        <option value="{{ $color->id }}">{{ $color->value_name }} ({{ $color->value }})</option>
                                     @endforeach
                                 </select>
                             </div>

@@ -36,6 +36,7 @@ class AttributeValueController extends Controller
         $validator = Validator::make($request->all(), [
             'attribute_id' => 'required|exists:attributes,id',
             'value' => 'required|string',
+            'value_name' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -47,6 +48,7 @@ class AttributeValueController extends Controller
             $attributeValue = new AttributeValue();
             $attributeValue->attribute_id = $request->attribute_id;
             $attributeValue->value = $request->value;
+            $attributeValue->value_name = $request->value_name ?? null;
             $attributeValue->status = 1;
             $attributeValue->save();
 
@@ -85,6 +87,7 @@ class AttributeValueController extends Controller
         $validator = Validator::make($request->all(), [
             'attribute_id' => 'required|exists:attributes,id',
             'value_edit' => 'required|string',
+            'value_name_edit' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -95,6 +98,7 @@ class AttributeValueController extends Controller
             DB::beginTransaction();
             $attributeValue = AttributeValue::findOrFail($id);
             $attributeValue->value = $request->value_edit;
+            $attributeValue->value_name = $request->value_name_edit;
             $attributeValue->save();
 
             DB::commit();
