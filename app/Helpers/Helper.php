@@ -149,6 +149,37 @@ class Helper
         return asset('bundleDefaultImages/default.png');
     }
 
+    public static function bundleImageWidth($subcategories)
+    {
+        $subcategories = is_array($subcategories) ? $subcategories : json_decode($subcategories, true);
+        if (!is_array($subcategories)) {
+            return '70%';
+        }
+
+        // Sort for unordered match
+        sort($subcategories);
+
+        $key = implode(',', $subcategories);
+
+        $combinationImages = [
+            '1,2,3,4' => '70%',
+            '1,2,3'   => '70%',
+            '1,2,4'   => '70%',
+            '1,2'     => '70%',
+            '3,4'     => '70%',
+            '1'       => '60%',
+            '2'       => '60%',
+            '3'       => '70%',
+            '4'       => '70%',
+        ];
+
+        if (isset($combinationImages[$key])) {
+            return $combinationImages[$key];
+        }
+
+        return '70%';
+    }
+
     public static function renderRecaptcha($formId, $action = 'register')
     {
         if (config('captcha.version') === 'v3') {

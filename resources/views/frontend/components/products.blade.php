@@ -87,7 +87,7 @@
 
                         <div class="pro-img">
                             <img class="img-fluid" src="{{ asset(App\Helpers\Helper::bundleDefaultImage($bundle->subcategories)) }}"
-                                alt="" />
+                                alt="" style="max-width: {{ App\Helpers\Helper::bundleImageWidth($bundle->subcategories) }} !important;"/>
                             {{-- @if (is_file(public_path('storage/' . $bundle->image)))
                                 <img class="img-fluid" src="{{ url(asset('storage/' . $bundle->image)) }}"
                                     alt="" />
