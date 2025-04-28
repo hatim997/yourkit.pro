@@ -104,7 +104,7 @@ class KitProductBundleController extends Controller
             'price' => 'required|integer|min:0',
             'discount_percentage' => 'required|integer|min:0|max:100',
             'status' => 'required|in:1,0',
-            'image' => 'required|file|max_size',
+            'image' => 'nullable|file|max_size',
             'products' => 'required|array',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',
