@@ -1,11 +1,12 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
         <a href="{{ route('dashboard') }}" class="app-brand-link">
-            <span class="app-brand-logo demo">
-                <img src="{{ asset(\App\Helpers\Helper::getFavicon()) }}" alt="{{ env('APP_NAME') }}">
+            <span class="" >
+                <img style="width: 150px;" src="{{ asset(\App\Helpers\Helper::getLogoLight()) }}" alt="{{ env('APP_NAME') }}">
+                {{-- <img src="{{ asset(\App\Helpers\Helper::getFavicon()) }}" alt="{{ env('APP_NAME') }}"> --}}
             </span>
-            <span class="app-brand-text demo menu-text fw-bold"
-                style="width: 150px; font-size: 15px;">{{ \App\Helpers\Helper::getCompanyName() }}</span>
+            {{-- <span class="app-brand-text demo menu-text fw-bold"
+                style="width: 150px; font-size: 15px;">{{ \App\Helpers\Helper::getCompanyName() }}</span> --}}
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">

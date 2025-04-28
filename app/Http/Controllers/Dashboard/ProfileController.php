@@ -10,6 +10,7 @@ use App\Models\Language;
 use App\Models\MaritalStatus;
 use App\Models\Profile;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -123,7 +124,7 @@ class ProfileController extends Controller
 
             $profile->first_name = $request->first_name;
             $profile->last_name = $request->last_name;
-            $profile->dob = $profile->dob ? date('Y-m-d', strtotime($profile->dob)) : null;
+            $profile->dob = $request->dob ? Carbon::parse($request->dob)->toDateString() : null;
             $profile->bio = $request->bio;
             $profile->gender_id = $request->gender_id;
             $profile->language_id = $request->language_id;

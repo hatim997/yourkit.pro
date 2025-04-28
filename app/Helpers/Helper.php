@@ -19,11 +19,11 @@ class Helper
     }
     public static function getLogoLight()
     {
-        return CompanySetting::first()->logo_light ?? asset('assets/img/logo/logo_light.png');
+        return CompanySetting::first()->light_logo ?? asset('assets/img/logo/logo_light.png');
     }
     public static function getLogoDark()
     {
-        return CompanySetting::first()->logo_dark ?? asset('assets/img/logo/logo_light.png');
+        return CompanySetting::first()->dark_logo ?? asset('assets/img/logo/logo_light.png');
     }
     public static function getFavicon()
     {
