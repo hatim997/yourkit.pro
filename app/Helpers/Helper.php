@@ -118,6 +118,37 @@ class Helper
         return $amount . $symbol;
     }
 
+    public static function bundleDefaultImage($subcategories)
+    {
+        $subcategories = is_array($subcategories) ? $subcategories : json_decode($subcategories, true);
+        if (!is_array($subcategories)) {
+            return asset('bundleDefaultImages/default.png');
+        }
+
+        // Sort for unordered match
+        sort($subcategories);
+
+        $key = implode(',', $subcategories);
+
+        $combinationImages = [
+            '1,2,3,4' => 'tshirt-hoodie-cap-beanie-bundle.png',
+            '1,2,3'   => 'tshirt-hoodie-cap-bundle.png',
+            '1,2,4'   => 'tshirt-hoodie-beanie-bundle.png',
+            '1,2'     => 'tshirt-hoodie-bundle.png',
+            '3,4'     => 'cap-beanie-bundle.png',
+            '1'       => 'tshirt-bundle.png',
+            '2'       => 'hoodie-bundle.png',
+            '3'       => 'cap-bundle.png',
+            '4'       => 'beanie-bundle.png',
+        ];
+
+        if (isset($combinationImages[$key])) {
+            return asset('bundleDefaultImages/' . $combinationImages[$key]);
+        }
+
+        return asset('bundleDefaultImages/default.png');
+    }
+
     public static function renderRecaptcha($formId, $action = 'register')
     {
         if (config('captcha.version') === 'v3') {

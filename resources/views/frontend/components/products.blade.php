@@ -86,12 +86,14 @@
 
 
                         <div class="pro-img">
-                            @if (is_file(public_path('storage/' . $bundle->image)))
+                            <img class="img-fluid" src="{{ asset(App\Helpers\Helper::bundleDefaultImage($bundle->subcategories)) }}"
+                                alt="" />
+                            {{-- @if (is_file(public_path('storage/' . $bundle->image)))
                                 <img class="img-fluid" src="{{ url(asset('storage/' . $bundle->image)) }}"
                                     alt="" />
                             @else
                                 <img class="img-fluid" src="{{ url(asset('default-shirt.png')) }}" alt="" />
-                            @endif
+                            @endif --}}
                         </div>
                         <ul class="quantity-info-lst">
                             @forelse ($bundle->products as $product)
