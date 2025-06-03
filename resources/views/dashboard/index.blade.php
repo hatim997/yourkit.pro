@@ -163,7 +163,7 @@
                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
                                                     <h6 class="mb-0">{{ $product['name'] }}</h6>
-                                                    <small class="text-body d-block">Item: #FXZ-4567</small>
+                                                    {{-- <small class="text-body d-block">Item: #FXZ-4567</small> --}}
                                                 </div>
                                                 <div class="user-progress d-flex align-items-center gap-1">
                                                     <p class="mb-0">{{ $product['total_orders'] }}</p>
