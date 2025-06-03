@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('color_id');
             $table->integer('size_value_id');
             $table->integer('color_value_id');
+            $table->double('cost', 10, 2)->nullable();
             $table->double('price', 10, 2);
             $table->unsignedBigInteger('quantity')->default(0);
             $table->string('image')->nullable();

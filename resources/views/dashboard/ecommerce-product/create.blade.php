@@ -116,6 +116,7 @@
                             <thead>
                                 <th>Size</th>
                                 <th>Color</th>
+                                <th>Cost</th>
                                 <th>Price</th>
                                 <th>No. of stocks</th>
                                 <th>Image <small class="text-muted">(Image resolution must be 350px × 300px)</small></th>
@@ -143,6 +144,8 @@
                                                     {{ $cl->value_name }}</option>
                                             @endforeach
                                         </select>
+                                    </td>
+                                    <td><input class="form-control" type="number" name="attribute[0][cost]" required>
                                     </td>
                                     <td><input class="form-control" type="number" name="attribute[0][price]" required>
                                     </td>
@@ -239,6 +242,8 @@
                     '][color]" id="color_' + counter +
                     '" required=""><option value="">Select Value</option>' + colorOption +
                     '</select></td><td><input class="form-control" type="number" name="attribute[' +
+                    counter +
+                    '][cost]" required></td><td><input class="form-control" type="number" name="attribute[' +
                     counter +
                     '][price]" required></td><td><input class="form-control" type="number" name="attribute[' +
                     counter +

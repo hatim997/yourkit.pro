@@ -9,6 +9,8 @@
     {{-- <li class="breadcrumb-item active">{{ __('Dashboard') }}</li> --}}
 @endsection
 
+{{-- @dd($mostOrderedProducts) --}}
+
 @section('content')
     <div class="row g-6">
         <!-- View sales -->
@@ -135,7 +137,46 @@
                 </div>
                 <!--/ Profit last month -->
 
-                
+                <!-- Popular Product -->
+                <div class="col-xxl-4 col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="card-title m-0 me-2">
+                                <h5 class="mb-1">Popular Products</h5>
+                                <p class="card-subtitle">Total {{ $totalOrders }} Orders</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <ul class="p-0 m-0">
+                                @if (isset($mostOrderedProducts) && count($mostOrderedProducts))
+                                    @foreach ($mostOrderedProducts as $product)
+                                        <li class="d-flex mb-6">
+                                            <div class="me-4">
+                                                @if (isset($product['attribute']) && $product['attribute']->image)
+                                                    <img src="{{ asset('storage/' . $product['attribute']->image) }}" alt="User" class="rounded"
+                                                        width="46" />
+                                                @else
+                                                    <img src="{{ asset('uploads/default_product.png') }}" alt="User" class="rounded"
+                                                        width="46" />
+                                                @endif
+                                            </div>
+                                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                <div class="me-2">
+                                                    <h6 class="mb-0">{{ $product['name'] }}</h6>
+                                                    <small class="text-body d-block">Item: #FXZ-4567</small>
+                                                </div>
+                                                <div class="user-progress d-flex align-items-center gap-1">
+                                                    <p class="mb-0">{{ $product['total_orders'] }}</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                @endif
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!--/ Popular Product -->
             </div>
         </div>
     </div>
@@ -282,8 +323,6 @@
             const profitLastMonth = new ApexCharts(profitLastMonthEl, profitLastMonthConfig);
             profitLastMonth.render();
         }
-
-
     </script>
 
 @endsection

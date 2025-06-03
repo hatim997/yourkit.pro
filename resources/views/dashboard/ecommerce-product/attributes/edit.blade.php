@@ -52,12 +52,22 @@
                             <select class="form-select select2" name="color_value_id" id="color_value_id" required>
                                 <option value="" selected disabled>Select Value</option>
                                 @foreach ($colorAttributes->attributeValues as $cl)
-                                    <option value="{{ $cl->id }}" style="background-color: {{ $cl->value }}"
+                                    <option value="{{ $cl->id }}" style="background-color: {{ $cl->value }} !important"
                                         {{ $ecommerceAttribute->color_value_id == $cl->id ? 'selected' : '' }}>
                                         {{ $cl->value }}</option>
                                 @endforeach
                             </select>
                             @error('color_value_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="cost" class="form-label">Cost <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control @error('cost') is-invalid @enderror" id="cost"
+                                name="cost" value="{{ old('cost', $ecommerceAttribute->cost) }}" required>
+                            @error('cost')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

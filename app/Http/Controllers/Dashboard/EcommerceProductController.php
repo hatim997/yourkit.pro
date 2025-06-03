@@ -104,6 +104,7 @@ class EcommerceProductController extends Controller
                     'color_id' => 2,
                     'size_value_id' => $arrtibute['size'],
                     'color_value_id' => $arrtibute['color'],
+                    'cost' => $arrtibute['cost'],
                     'price' => $arrtibute['price'],
                     'quantity' => $arrtibute['quantity'],
                 ];

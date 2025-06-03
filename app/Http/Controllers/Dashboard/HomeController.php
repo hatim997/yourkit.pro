@@ -59,6 +59,62 @@ class HomeController extends Controller
             $profits = $dailyProfit->pluck('total')->map(fn($value) => round($value, 2))->toArray();
             // dd($orders);
 
+            $directProductOrders = DB::table('order_details')
+                ->select('products.id as product_id', 'products.name', DB::raw('COUNT(*) as total_orders'))
+                ->join('products', function ($join) {
+                    $join->on('order_details.product_id', '=', 'products.id')
+                        ->whereNull('order_details.bundle_id');
+                })
+                ->groupBy('products.id', 'products.name');
+
+            $bundleProductOrders = DB::table('order_details')
+                ->select('products.id as product_id', 'products.name', DB::raw('COUNT(*) as total_orders'))
+                ->join('product_bundles', 'order_details.bundle_id', '=', 'product_bundles.bundle_id')
+                ->join('products', 'product_bundles.product_id', '=', 'products.id')
+                ->whereNull('order_details.product_id')
+                ->groupBy('products.id', 'products.name');
+
+            $mostOrderedProductsRaw = $directProductOrders
+                ->unionAll($bundleProductOrders)
+                ->get();
+
+            // Aggregate total orders per product
+            $mostOrderedProducts = $mostOrderedProductsRaw
+                ->groupBy('product_id')
+                ->map(function ($items) {
+                    return [
+                        'product_id' => $items[0]->product_id,
+                        'name' => $items[0]->name,
+                        'total_orders' => $items->sum('total_orders'),
+                    ];
+                })
+                ->sortByDesc('total_orders')
+                ->take(10)
+                ->values();
+
+            // Load attributes for top products
+            $productIds = $mostOrderedProducts->pluck('product_id')->toArray();
+            $productAttributes = DB::table('product_attributes')
+                ->join('attributes', 'product_attributes.attribute_id', '=', 'attributes.id')
+                ->where('product_attributes.attribute_id', 2)
+                ->whereIn('product_attributes.product_id', $productIds)
+                ->select('product_attributes.product_id', 'attributes.type as attribute_name', 'product_attributes.value', 'product_attributes.image')
+                ->orderBy('product_attributes.id') // optional: get the first created
+                ->get()
+                ->groupBy('product_id')
+                ->map(function ($group) {
+                    return $group->first(); // only take the first one per product
+                });
+
+
+            // Merge attributes into product list
+            $mostOrderedProducts->transform(function ($product) use ($productAttributes) {
+                $product['attribute'] = $productAttributes[$product['product_id']] ?? null;
+                return $product;
+            });
+
+
+
             return view('dashboard.index', compact(
                 'totalOrders',
                 'statusCounts',
@@ -66,6 +122,7 @@ class HomeController extends Controller
                 'profits',
                 'dates',
                 'lastMonthProfit',
+                'mostOrderedProducts',
             ));
         } catch (\Throwable $th) {
             Log::error('Dashboard View Failed', ['error' => $th->getMessage()]);

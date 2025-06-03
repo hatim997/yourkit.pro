@@ -61,6 +61,7 @@ class EcomProductAttributeController extends Controller
         $validator = Validator::make($request->all(), [
             'size_value_id' => 'required|exists:attribute_values,id',
             'color_value_id' => 'required|exists:attribute_values,id',
+            'cost' => 'required|integer|min:0',
             'price' => 'required|integer|min:0',
             'quantity' => 'required|integer|min:0',
             'images' => 'required|array',
@@ -81,6 +82,7 @@ class EcomProductAttributeController extends Controller
                 'color_id' => 2,
                 'size_value_id' => $request['size_value_id'],
                 'color_value_id' => $request['color_value_id'],
+                'cost' => $request['cost'],
                 'price' => $request['price'],
                 'quantity' => $request['quantity'],
             ];
@@ -144,6 +146,7 @@ class EcomProductAttributeController extends Controller
         $validator = Validator::make($request->all(), [
             'size_value_id' => 'required|exists:attribute_values,id',
             'color_value_id' => 'required|exists:attribute_values,id',
+            'cost' => 'required|integer|min:0',
             'price' => 'required|integer|min:0',
             'quantity' => 'required|integer|min:0',
             'images' => 'nullable|array',
@@ -159,6 +162,7 @@ class EcomProductAttributeController extends Controller
             $ecommerceAttribute = EcommerceAttribute::findOrFail($id);
             $ecommerceAttribute->size_value_id = $request->size_value_id;
             $ecommerceAttribute->color_value_id = $request->color_value_id;
+            $ecommerceAttribute->cost = $request->cost;
             $ecommerceAttribute->price = $request->price;
             $ecommerceAttribute->quantity = $request->quantity;
             $ecommerceAttribute->save();

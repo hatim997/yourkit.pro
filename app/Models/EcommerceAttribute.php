@@ -12,7 +12,7 @@ class EcommerceAttribute extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_id', 'size_id', 'color_id', 'size_value_id', 'color_value_id', 'price', 'quantity', 'image'];
+    protected $fillable = ['product_id', 'size_id', 'color_id', 'size_value_id', 'color_value_id', 'price', 'quantity', 'image', 'cost'];
 
     public function product(): BelongsTo
     {

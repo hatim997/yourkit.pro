@@ -31,6 +31,7 @@
                             <th>{{ __('Sr.') }}</th>
                             <th>{{ __('Size') }}</th>
                             <th>{{ __('Color') }}</th>
+                            <th>{{ __('Cost') }}</th>
                             <th>{{ __('Price') }}</th>
                             <th>{{ __('Quantity') }}</th>
                             <th>{{ __('Images') }}</th>
@@ -55,6 +56,7 @@
                                         No Color
                                     @endif
                                 </td>
+                                <td>{{ $item->cost ? \App\Helpers\Helper::formatCurrency($item->cost) : 'N/A' }}</td>
                                 <td>{{ \App\Helpers\Helper::formatCurrency($item->price) }}</td>
                                 <td>{{ $item->quantity }}</td>
                                 <td>

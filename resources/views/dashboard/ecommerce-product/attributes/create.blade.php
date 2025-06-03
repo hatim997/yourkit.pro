@@ -55,6 +55,16 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
+                            <label for="cost" class="form-label">Cost <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control @error('cost') is-invalid @enderror" id="cost"
+                                name="cost" value="{{ old('cost') }}" required>
+                            @error('cost')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
                             <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
                             <input type="number" class="form-control @error('price') is-invalid @enderror" id="price"
                                 name="price" value="{{ old('price') }}" required>

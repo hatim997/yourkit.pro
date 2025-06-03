@@ -28,7 +28,7 @@ $(document).ready(function () {
                         //var pID = $(this).val();
                         let selectedQuantityValue = parseInt($(this).val()) || 0;
                         total += selectedQuantityValue;
-                        
+
                     });
                     if(total == parseInt(totalPQuantity)){
                         console.log('match-'+pID);
@@ -39,12 +39,12 @@ $(document).ready(function () {
                         formValid=1;
                     }
                 }
-                
+
             });
             if(formValid > 0){
                 return false;
             }
-            
+
 
             $(".step-" + currentStep).addClass(
                 "animate__animated animate__fadeOutLeft"
@@ -100,7 +100,7 @@ $(document).ready(function () {
             if(i == currentStep){
                 $('#step-circle'+i).removeClass('active');
             }
-            
+
         }
     };
 
@@ -135,5 +135,5 @@ $(document).ready(function () {
 
     });
 
-    
+
 });

@@ -110,6 +110,33 @@ class CartRepository extends BaseRepository
                 'positions' => isset($data['positions'][$product['type']]) ? json_encode($data['positions'][$product['type']]) : null
             ]);
 
+            // Save extra color variations if present
+            if (!empty($product['extra']) && is_array($product['extra'])) {
+                foreach ($product['extra'] as $extraColorKey => $extraColorData) {
+                    $extraContentsData = [
+                        'color' => $extraColorData['color'],
+                        'attr_id' => $extraColorData['color_attribute_id'],
+                        'size' => $extraColorData['size']
+                    ];
+
+                    $cart->contents()->create([
+                        'cart_id' => $cart->id,
+                        'product_id' => $product['id'],
+                        'contents' => json_encode($extraContentsData),
+                        'positions' => isset($data['positions'][$product['type']]) ? json_encode($data['positions'][$product['type']]) : null
+                    ]);
+
+                    // ✅ Extra cost calculation for each extra size
+                    if (!empty($extraColorData['size'])) {
+                        foreach ($extraColorData['size'] as $extraSize) {
+                            if (isset($extraSize['extra_cost'])) {
+                                $sizeExtraCost += $extraSize['quantity'] * $extraSize['extra_cost'];
+                            }
+                        }
+                    }
+                }
+            }
+
             /** calculation for size **/
 
             if (!empty($product['size'])) {
@@ -234,6 +261,33 @@ class CartRepository extends BaseRepository
                 'contents' => json_encode($contentsData),
                 'positions' => isset($data['positions'][$product['type']]) ? json_encode($data['positions'][$product['type']]) : null
             ]);
+
+            // Save extra color variations if present
+            if (!empty($product['extra']) && is_array($product['extra'])) {
+                foreach ($product['extra'] as $extraColorKey => $extraColorData) {
+                    $extraContentsData = [
+                        'color' => $extraColorData['color'],
+                        'attr_id' => $extraColorData['color_attribute_id'],
+                        'size' => $extraColorData['size']
+                    ];
+
+                    $cart->contents()->create([
+                        'cart_id' => $cart->id,
+                        'product_id' => $product['id'],
+                        'contents' => json_encode($extraContentsData),
+                        'positions' => isset($data['positions'][$product['type']]) ? json_encode($data['positions'][$product['type']]) : null
+                    ]);
+
+                    // ✅ Extra cost calculation for each extra size
+                    if (!empty($extraColorData['size'])) {
+                        foreach ($extraColorData['size'] as $extraSize) {
+                            if (isset($extraSize['extra_cost'])) {
+                                $sizeExtraCost += $extraSize['quantity'] * $extraSize['extra_cost'];
+                            }
+                        }
+                    }
+                }
+            }
 
             /** calculation for size **/
 
