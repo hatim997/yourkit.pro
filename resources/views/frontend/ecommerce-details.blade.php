@@ -331,7 +331,7 @@
                         if (response.status) {
                             localStorage.setItem('sessionId', JSON.stringify(response
                                 .data));
-                            window.location.href = "{{ route('frontend.cart') }}";
+                            window.location.reload();
                         } else {
 
                             toastr.error(response.message, 'Error');
