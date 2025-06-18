@@ -176,106 +176,100 @@
 </div>
 
 @push('scripts')
-    {{-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.add-extra-color').forEach(button => {
-            button.addEventListener('click', function() {
-                const productId = this.getAttribute('data-productid');
-                const key = this.getAttribute('data-key');
-
-                // Fix: Use template literals correctly for querySelector
-                const wrapper = document.querySelector(
-                    `.color-size-wrapper[data-productid="${productId}"][data-key="${key}"]`
-                );
-
-                const clone = wrapper.cloneNode(true);
-
-                // Reset selects inside clone
-                clone.querySelectorAll('select').forEach(select => {
-                    select.selectedIndex = 0;
-
-                    // Re-add correct productquant class for proper updateRemaining tracking
-                    const productId = select.getAttribute('data-productid');
-                    if (productId) {
-                        select.classList.forEach(cls => {
-                            if (cls.startsWith('productquant-')) {
-                                select.classList.remove(cls);
-                            }
-                        });
-                        select.setAttribute('data-productid', productId);
-                        select.id = `productquant-${productId}-${Date.now()}`;
-                        select.classList.add(`productquant-${productId}`);
-                    }
-                });
-
-                // Make input names unique — fix string quotes & syntax
-                const time = Date.now();
-                clone.querySelectorAll('[name]').forEach(input => {
-                    input.setAttribute('name', input.name.replace(
-                        `product[${key}]`,
-                        `product[${key}][extra][${time}]`
-                    ));
-                });
-
-                // Add remove button
-                const removeBtn = document.createElement('button');
-                removeBtn.className = 'btn btn-sm btn-danger mt-3 remove-extra-color';
-                removeBtn.type = 'button';
-                removeBtn.textContent = 'Remove';
-
-                clone.appendChild(removeBtn);
-
-                // Fix: container selector with backticks and quotes
-                const container = document.getElementById(`extra-colors-${productId}`);
-                container.appendChild(clone);
-            });
-        });
-
-        // Delegate event to remove cloned blocks
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.classList.contains('remove-extra-color')) {
-                e.target.closest('.color-size-wrapper').remove();
-            }
-        });
-    });
-</script> --}}
-
     <script>
         $(document).ready(function() {
+            // $('.add-extra-color').on('click', function() {
+            //     const productId = $(this).data('productid');
+            //     const key = $(this).data('key');
+
+            //     // Always clone the FIRST matching wrapper only
+            //     const $originalWrapper = $(
+            //         `.color-size-wrapper[data-productid="${productId}"][data-key="${key}"]`).first();
+            //     const $clone = $originalWrapper.clone();
+
+            //     // Reset selects inside clone
+            //     $clone.find('select').each(function() {
+            //         $(this).prop('selectedIndex', 0);
+
+            //         const productId = $(this).data('productid');
+            //         if (productId) {
+            //             $(this).removeClass(function(index, className) {
+            //                 return (className.match(/productquant-\S+/g) || []).join(' ');
+            //             });
+
+            //             const newId = `productquant-${productId}-${Date.now()}`;
+            //             $(this).attr('id', newId).addClass(`productquant-${productId}`);
+            //         }
+            //     });
+
+            //     // Make input names unique
+            //     const time = Date.now();
+            //     $clone.find('[name]').each(function() {
+            //         const name = $(this).attr('name');
+            //         const newName = name.replace(`product[${key}]`,
+            //             `product[${key}][extra][${time}]`);
+            //         $(this).attr('name', newName);
+            //     });
+
+            //     // Remove any previous .remove-extra-color buttons before adding new one
+            //     $clone.find('.remove-extra-color').remove();
+
+            //     // Add remove button
+            //     const $removeBtn = $('<button>', {
+            //         class: 'btn btn-sm btn-danger mt-3 remove-extra-color',
+            //         type: 'button',
+            //         text: 'Remove'
+            //     });
+
+            //     $clone.append($removeBtn);
+
+            //     // Append clone to container
+            //     $(`#extra-colors-${productId}`).append($clone);
+            // });
             $('.add-extra-color').on('click', function() {
                 const productId = $(this).data('productid');
                 const key = $(this).data('key');
 
-                // Always clone the FIRST matching wrapper only
-                const $originalWrapper = $(
-                    `.color-size-wrapper[data-productid="${productId}"][data-key="${key}"]`).first();
+                // Clone the FIRST matching wrapper
+                const $originalWrapper = $(`.color-size-wrapper[data-productid="${productId}"][data-key="${key}"]`).first();
                 const $clone = $originalWrapper.clone();
 
                 // Reset selects inside clone
                 $clone.find('select').each(function() {
-                    $(this).prop('selectedIndex', 0);
+                    const $select = $(this);
+                    $select.prop('selectedIndex', 0); // Reset to 0
+                    $select.removeClass(function(index, className) {
+                        return (className.match(/productquant-\S+/g) || []).join(' ');
+                    });
 
-                    const productId = $(this).data('productid');
-                    if (productId) {
-                        $(this).removeClass(function(index, className) {
-                            return (className.match(/productquant-\S+/g) || []).join(' ');
-                        });
+                    // Generate a unique ID for the select
+                    const newId = `productquant-${productId}-${Date.now()}`;
+                    $select.attr('id', newId).addClass(`productquant-${productId}`);
 
-                        const newId = `productquant-${productId}-${Date.now()}`;
-                        $(this).attr('id', newId).addClass(`productquant-${productId}`);
-                    }
+                    // Ensure data attributes are preserved
+                    const size = $select.data('size');
+                    const cost = $select.data('cost');
+                    $select.data('productid', productId);
+                    $select.data('size', size);
+                    $select.data('cost', cost);
                 });
 
                 // Make input names unique
                 const time = Date.now();
                 $clone.find('[name]').each(function() {
                     const name = $(this).attr('name');
-                    const newName = name.replace(`product[${key}]`,
-                        `product[${key}][extra][${time}]`);
+                    const newName = name.replace(`product[${key}]`, `product[${key}][extra][${time}]`);
                     $(this).attr('name', newName);
                 });
 
-                // Remove any previous .remove-extra-color buttons before adding new one
+                // Reset color selection to the first option
+                $clone.find('.color-selector .entry').removeClass('active');
+                $clone.find('.color-selector .entry').first().addClass('active');
+                const firstColor = $clone.find('.color-selector .entry').first();
+                $clone.find(`#color_${key}`).val(firstColor.data('color'));
+                $clone.find(`#color_attr_${key}`).val(firstColor.data('attrval'));
+
+                // Remove any previous .remove-extra-color buttons
                 $clone.find('.remove-extra-color').remove();
 
                 // Add remove button
@@ -289,6 +283,9 @@
 
                 // Append clone to container
                 $(`#extra-colors-${productId}`).append($clone);
+
+                // Update remaining quantities
+                updateRemaining(productId);
             });
 
 
@@ -346,38 +343,88 @@
             });
 
 
+            // function updateRemaining(productId) {
+            //     // Fix selectors with backticks and quotes
+            //     let total = parseInt($(`.printproducthid[value="${productId}"]`).data('productquantity')) || 0;
+
+            //     let selectedTotal = 0;
+
+            //     $(`.productquant-${productId}`).each(function() {
+            //         selectedTotal += parseInt($(this).val()) || 0;
+            //     });
+
+            //     let remaining = total - selectedTotal;
+            //     let $remainingText = $(`#remaining-text-${productId}`);
+
+            //     if (remaining <= 0) {
+            //         remaining = 0;
+            //         $remainingText.css('color', 'green');
+            //     } else {
+            //         $remainingText.css('color', 'red');
+            //     }
+
+            //     $remainingText.text(`${remaining} T-shirts remaining to select`);
+
+            //     // Update max options in selects
+            //     $(`.productquant-${productId}`).each(function() {
+            //         let currentVal = parseInt($(this).val());
+            //         let $select = $(this);
+
+            //         $select.empty();
+            //         for (let i = 0; i <= remaining + currentVal; i++) {
+            //             $select.append(
+            //                 `<option value="${i}" ${i === currentVal ? 'selected' : ''}>${i}</option>`);
+            //         }
+            //     });
+            // }
+
             function updateRemaining(productId) {
-                // Fix selectors with backticks and quotes
+                // Get the total allowed quantity for the product
                 let total = parseInt($(`.printproducthid[value="${productId}"]`).data('productquantity')) || 0;
 
+                // Calculate the total selected quantity across all size dropdowns for this product
                 let selectedTotal = 0;
-
                 $(`.productquant-${productId}`).each(function() {
                     selectedTotal += parseInt($(this).val()) || 0;
                 });
 
+                // Calculate remaining quantity
                 let remaining = total - selectedTotal;
-                let $remainingText = $(`#remaining-text-${productId}`);
 
+                // Update the remaining text
+                let $remainingText = $(`#remaining-text-${productId}`);
                 if (remaining <= 0) {
                     remaining = 0;
                     $remainingText.css('color', 'green');
                 } else {
                     $remainingText.css('color', 'red');
                 }
-
                 $remainingText.text(`${remaining} T-shirts remaining to select`);
 
-                // Update max options in selects
+                // Update all size dropdowns for this product
                 $(`.productquant-${productId}`).each(function() {
-                    let currentVal = parseInt($(this).val());
                     let $select = $(this);
+                    let currentVal = parseInt($select.val()) || 0;
 
+                    // Calculate the maximum selectable quantity for this dropdown
+                    // It should be the current value plus the remaining quantity
+                    let maxSelectable = remaining + currentVal;
+
+                    // Preserve the size attribute for this dropdown
+                    let size = $select.data('size');
+                    let cost = $select.data('cost');
+
+                    // Rebuild the dropdown options
                     $select.empty();
-                    for (let i = 0; i <= remaining + currentVal; i++) {
+                    for (let i = 0; i <= maxSelectable; i++) {
                         $select.append(
-                            `<option value="${i}" ${i === currentVal ? 'selected' : ''}>${i}</option>`);
+                            `<option value="${i}" ${i === currentVal ? 'selected' : ''}>${i}</option>`
+                        );
                     }
+
+                    // Re-attach data attributes to ensure they're preserved
+                    $select.data('size', size);
+                    $select.data('cost', cost);
                 });
             }
 
