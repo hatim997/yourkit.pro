@@ -88,12 +88,47 @@
                                                     }
                                                 @endphp
 
+                                                @php
+                                                    $colorValues = isset($color->pivot->color_values)
+                                                        ? json_decode($color->pivot->color_values, true)
+                                                        : [$color->pivot->value];
+
+                                                    $colorCodes = \App\Models\AttributeValue::whereIn(
+                                                        'id',
+                                                        $colorValues,
+                                                    )
+                                                        ->pluck('value')
+                                                        ->toArray();
+
+                                                    if (count($colorCodes) === 1) {
+                                                        $backgroundStyle = "background-color: {$colorCodes[0]};";
+                                                    } elseif (count($colorCodes) > 1) {
+                                                        // Build conic-gradient string
+                                                        $segments = [];
+                                                        $step = 100 / count($colorCodes);
+                                                        $start = 0;
+
+                                                        foreach ($colorCodes as $code) {
+                                                            $end = $start + $step;
+                                                            $segments[] = "{$code} {$start}% {$end}%";
+                                                            $start = $end;
+                                                        }
+
+                                                        $backgroundStyle =
+                                                            'background: conic-gradient(' .
+                                                            implode(', ', $segments) .
+                                                            ');';
+                                                    } else {
+                                                        $backgroundStyle = 'background-color: #ccc;';
+                                                    }
+                                                @endphp
+
 
                                                 <div data-attrval="{{ $color->attr_id }}" data-color="{{ $color->value }}"
                                                     data-prid="{{ $product->id }}" data-key="{{ $key }}"
                                                     data-image="{{ !is_null($color->image) ? url(asset('storage/' . $color->image)) : url(asset('assets/frontend/images/t-shirt.png')) }}"
                                                     class="entry {{ $isSelected ? 'active' : '' }}"
-                                                    style="background: {{ $color->value }};">&nbsp;
+                                                    style="{{ $backgroundStyle }} border-radius: 50%; width: 30px; height: 30px; display: inline-block; border: 1px solid #000;">&nbsp;
                                                 </div>
                                             @endforeach
                                         @endisset

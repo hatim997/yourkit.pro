@@ -123,8 +123,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label" for="select2Primary">{{ __('Sizes') }} <span
-                                    class="text-danger">*</span></label>
+                            <label class="form-label" for="select2Primary">{{ __('Sizes') }}</label>
                             <div class="select2-primary">
                                 <select id="select2Primary" name="size_id[]" class="select2 form-select" multiple>
                                     @if (isset($sizeAttributes->attributeValues) && count($sizeAttributes->attributeValues) > 0)

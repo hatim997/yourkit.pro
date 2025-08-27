@@ -121,7 +121,7 @@
                                                     data-prid="{{ $product->id }}" data-key="{{ $key }}"
                                                     data-image="{{ !is_null($color->image) ? url(asset('storage/' . $color->image)) : url(asset('assets/frontend/images/t-shirt.png')) }}"
                                                     class="entry {{ $key2 == 0 ? 'active' : '' }}"
-                                                    style="{{ $backgroundStyle }} border-radius: 50%; width: 30px; height: 30px; display: inline-block;">
+                                                    style="{{ $backgroundStyle }} border-radius: 50%; width: 30px; height: 30px; display: inline-block; border: 1px solid #000;">
                                                     &nbsp;</div>
                                             @endforeach
                                         @endisset

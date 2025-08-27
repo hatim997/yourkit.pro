@@ -13,6 +13,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Bootstrap CSS -->
 
+    <link rel="preload" href="{{ asset('assets/frontend/webfonts/Nanami-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('assets/frontend/webfonts/Nanami-Light.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('assets/frontend/webfonts/Nanami.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('assets/frontend/webfonts/Nanami-Book.woff2') }}" as="font" type="font/woff2" crossorigin>
+
+
     <link rel="icon" type="image/x-icon" href="{{ asset(\App\Helpers\Helper::getFavicon()) }}">
     <link rel="stylesheet" href="{{ url(asset('assets/frontend/css/bootstrap.min.css')) }}">
     <link rel="stylesheet" href="{{ url(asset('assets/frontend/css/owl.carousel.2.3.4.css')) }}">

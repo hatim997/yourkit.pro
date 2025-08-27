@@ -74,7 +74,7 @@ class KitProductController extends Controller
             'no_of_stock' => 'required|integer',
             'status' => 'required|in:1,0',
             'size_id' => 'nullable|array',
-            'size_id.*' => 'exists:attribute_values,id',
+            'size_id.*' => 'nullable|exists:attribute_values,id',
             'color_id' => 'required|array',
             'color_id.*' => 'required|array',
             'color_id.*.*' => 'required|integer|exists:attribute_values,id',

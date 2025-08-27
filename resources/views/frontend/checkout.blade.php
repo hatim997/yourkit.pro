@@ -458,7 +458,7 @@
 
             function calculateGrandTotal() {
                 const country = $('#country').val();
-                const baseTotal = parseFloat($('#sub-total').val());
+                const baseTotal = parseFloat({{ $total }});
                 const discount = parseFloat($('#current-discount').val());
                 let taxTotal = 0;
 
@@ -530,24 +530,28 @@
                             $message.text(response.message).removeClass().addClass('text-success');
 
                             // Get current values
-                            let originalTotal = parseFloat($('#sub-total').val());
+                            // let originalTotal = parseFloat($('#sub-total').val());
+                            let originalTotal = parseFloat({{ $total }});
                             console.log('current total ', originalTotal);
 
                             let oldDiscount = parseFloat($('#current-discount').val());
                             console.log('current discount ', oldDiscount);
                             let percentage = parseFloat(response
                                 .discount_percentage); // Make sure backend returns this
-
+                            console.log('new discount percentage ', percentage);
                             // Calculate new discount
                             let newDiscount = Math.round((percentage / 100) * originalTotal);
+                            console.log('new discount ', newDiscount);
                             let updatedTotal = originalTotal - newDiscount;
+
+                            console.log('updated Total ', updatedTotal);
 
                             let promoCodeId = response.promo_code_id
 
                             // Update UI
                             $('#discountAmount').text('{{ $currency_symbol }}' + newDiscount.toFixed(
                                 2));
-                            $('#totalAmount').text(updatedTotal.toFixed(2));
+                            $('#grandTotal').text(updatedTotal.toFixed(2));
                             $('#current-discount').val(newDiscount.toFixed(2));
                             $('#sub-total').val(updatedTotal.toFixed(
                                 2)); // optional: update base total

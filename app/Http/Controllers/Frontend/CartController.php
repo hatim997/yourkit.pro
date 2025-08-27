@@ -116,6 +116,7 @@ class CartController extends Controller
 
                             $attrContents = json_decode($content->contents);
                             $countattrContents = count(json_decode($content->contents, true));
+                            $product = $content->product;
 
                             // return $attrContents;
 
