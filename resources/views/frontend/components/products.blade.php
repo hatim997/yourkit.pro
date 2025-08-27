@@ -22,10 +22,10 @@
                             data-aos-duration="2000">
                             <div class="filter-ico">
                                 <img src="{{ isset($subcategory->media) ? url(asset('storage/' . $subcategory->media->path)) : '' }}"
-                                    alt="" />
+                                    alt="{{ $subcategory->name ?? env('APP_NAME') }}" />
                                 <span><img
                                         src="{{ isset($subcategory->media) ? url(asset('storage/' . $subcategory->media->path)) : '' }}"
-                                        alt="" /></span>
+                                        alt="{{ $subcategory->name ?? env('APP_NAME') }}" /></span>
                             </div>
                             <h4>{{ $subcategory->name }}</h4>
                         </li>
@@ -87,12 +87,12 @@
 
                         <div class="pro-img">
                             <img class="img-fluid" src="{{ asset(App\Helpers\Helper::bundleDefaultImage($bundle->subcategories)) }}"
-                                alt="" style="max-width: {{ App\Helpers\Helper::bundleImageWidth($bundle->subcategories) }} !important;"/>
+                                alt="{{ $bundle->name ?? env('APP_NAME') }}" style="max-width: {{ App\Helpers\Helper::bundleImageWidth($bundle->subcategories) }} !important;"/>
                             {{-- @if (is_file(public_path('storage/' . $bundle->image)))
                                 <img class="img-fluid" src="{{ url(asset('storage/' . $bundle->image)) }}"
-                                    alt="" />
+                                    alt="{{ $bundle->name ?? env('APP_NAME') }}" />
                             @else
-                                <img class="img-fluid" src="{{ url(asset('default-shirt.png')) }}" alt="" />
+                                <img class="img-fluid" src="{{ url(asset('default-shirt.png')) }}" alt="{{ $bundle->name ?? env('APP_NAME') }}" />
                             @endif --}}
                         </div>
                         <ul class="quantity-info-lst">

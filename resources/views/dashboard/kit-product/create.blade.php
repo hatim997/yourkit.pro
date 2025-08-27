@@ -166,8 +166,7 @@
                                 <div class="col-md-5">
                                     <div class="mb-3">
                                         <div class="select2-primary">
-                                            <select id="color_id" name="color_id[]" class="select2 form-select">
-                                                <option value="" selected disabled>{{ __('Select Color') }}</option>
+                                            <select id="color_id" name="color_id[0][]" class="select2 form-select" multiple>
                                                 @if (isset($colorAttributes->attributeValues) && count($colorAttributes->attributeValues) > 0)
                                                     @foreach ($colorAttributes->attributeValues as $color)
                                                         <option value="{{ $color->id }}"
@@ -225,6 +224,7 @@
                 }
             }
 
+            let colorItemIndex = $('.colorItemContainer').length;
             $('#adsMoreBtn').on('click', function(e) {
                 e.preventDefault();
 
@@ -233,8 +233,7 @@
                     <div class="col-md-5">
                         <div class="mb-3">
                             <div class="select2-primary">
-                                <select name="color_id[]" class="select2 form-select">
-                                    <option value="" selected disabled>Select Color</option>
+                                <select name="color_id[${colorItemIndex}][]" class="select2 form-select" multiple>
                                     @foreach ($colorAttributes->attributeValues as $color)
                                         <option value="{{ $color->id }}">{{ $color->value_name }} ({{ $color->value }})</option>
                                     @endforeach

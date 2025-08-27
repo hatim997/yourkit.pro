@@ -23,7 +23,7 @@
                                 <li>
                                     <div class="pro-img">
                                         <img class="img-fluid" src="{{ url('assets/frontend/' . $image->image) }}"
-                                            alt="" />
+                                            alt="{{ $position->title ?? env('APP_NAME') }}" />
                                     </div>
 
                                     <input class="image-checkbox" data-type="{{ $subcategory->slug }}"

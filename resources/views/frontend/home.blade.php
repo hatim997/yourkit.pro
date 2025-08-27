@@ -10,7 +10,7 @@
                  @if($banner->type== 'top')
                     <div class="item" data-dot="<button> 0{{ $key + 1 }} </button>">
                         <div class="banner-inner-section">
-                            <img src="{{ url(asset('storage/' . $banner->media->path)) }}" alt="" />
+                            <img src="{{ url(asset('storage/' . $banner->media->path)) }}" alt="{{ env('APP_NAME') }}" />
                             <div class="banner-txt">
                                 <h2>{{ $banner->title }}</h2>
                                 <h4>{{ $banner->description }}</h4>
@@ -41,7 +41,7 @@
             @endphp
             <div class="col-md-8" data-aos="fade-right" data-aos-duration="2000">
                 <div class="offer-bx" onclick="window.location.href='{{$bnr->url}}'" style="cursor:pointer">
-                    <img class="img-fluid" src="{{ url(asset('storage/' . $bnr->media->path)) }}" alt="" />
+                    <img class="img-fluid" src="{{ url(asset('storage/' . $bnr->media->path)) }}" alt="{{ env('APP_NAME') }}" />
                     <div class="offer-txt">
                         {{-- <h4>Upto 20% Off</h4>
                         <h3>Make The Most Of <br />Our <strong>Kangaroos Printing</strong></h3> --}}
@@ -55,7 +55,7 @@
         @endphp
             <div class="col-md-4" data-aos="fade-left" data-aos-duration="2500">
                 <div class="offer-bx custom-chng" onclick="window.location.href='{{$bnr2->url}}'" style="cursor:pointer">
-                    <img class="img-fluid" src="{{ url(asset('storage/' . $bnr2->media->path)) }}" alt="" />
+                    <img class="img-fluid" src="{{ url(asset('storage/' . $bnr2->media->path)) }}" alt="{{ env('APP_NAME') }}" />
                     <div class="offer-txt">
                         <!--<h4>Upto 15% Off</h4>-->
                         <!--<h3>On All T-Shirt Printing</h3>-->
@@ -81,7 +81,7 @@
             @endphp
                 <div class="col-md-6" data-aos="zoom-in" data-aos-duration="3000">
                     <div class="category-bx" onclick="window.location.href='{{$bnr3->url}}'" style="cursor:pointer">
-                        <img class="img-fluid" src="{{ url(asset('storage/' . $bnr3->media->path)) }}" alt="" />
+                        <img class="img-fluid" src="{{ url(asset('storage/' . $bnr3->media->path)) }}" alt="{{ env('APP_NAME') }}" />
                         <div class="inr-txt">
                             {{-- <h3>T-Shirt Printing Made Easy.</h3>
                             <p>You've got the ideas, we've got the tools</p> --}}
@@ -96,7 +96,7 @@
             @endphp
                 <div class="col-md-6" data-aos="zoom-in" data-aos-duration="3000">
                     <div class="category-bx" onclick="window.location.href='{{$bnr4->url}}'" style="cursor:pointer">
-                      <img class="img-fluid" src="{{ url(asset('storage/' . $bnr4->media->path)) }}" alt="" />
+                      <img class="img-fluid" src="{{ url(asset('storage/' . $bnr4->media->path)) }}" alt="{{ env('APP_NAME') }}" />
                       <div class="inr-txt">
                         {{-- <h3>One Place For All Your Needs</h3>
                         <ul>

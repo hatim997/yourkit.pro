@@ -34,7 +34,7 @@
                                 @endphp
                                 <img class="img-fluid"
                                     src="{{ $color->image ? url(asset('storage/' . $color->image)) : url(asset('assets/frontend/images/t-shirt.png')) }}"
-                                    alt="" id="pr_image_{{ $product->id }}">
+                                    alt="{{ $product->name ?? env('APP_NAME') }}" id="pr_image_{{ $product->id }}">
                             </div>
                             <h4>{{ $product->pivot->quantity }} {{ $product->name }}</h4>
                             @if ($product->sub_category_id == '1' || $product->sub_category_id == '2')

@@ -70,7 +70,7 @@
                                 <div class="pro-bx" data-aos="flip-left" data-aos-duration="1000">
                                     <div class="pro-img">
 
-                                        <img class="img-fluid" src="{{ url('storage/'. $product->ecommerce()->first()->images()->first()->image) }}" alt="" />
+                                        <img class="img-fluid" src="{{ url('storage/'. $product->ecommerce()->first()->images()->first()->image) }}" alt="{{ $product->name ?? env('APP_NAME') }}" />
                                     </div>
                                     <div class="prod-text">
                                         <h5>{{ $product->name }}</h5>

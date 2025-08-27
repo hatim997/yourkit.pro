@@ -35,7 +35,7 @@
                             <div class="pro-img">
                                 <img class="img-fluid"
                                     src="{{ $product->color[0]->image ? url(asset('storage/' . $product->color[0]->image)) : url(asset('assets/frontend/images/t-shirt.png')) }}"
-                                    alt="" id="pr_image_{{ $product->id }}">
+                                    alt="{{ $product->name ?? env('APP_NAME') }}" id="pr_image_{{ $product->id }}">
                             </div>
                             <h4>{{ $product->pivot->quantity }} {{ $product->name }}</h4>
                             @if ($product->sub_category_id == '1' || $product->sub_category_id == '2')
@@ -81,13 +81,85 @@
                                                     ->values();
                                             @endphp
                                             @foreach ($sortedColors as $key2 => $color)
+                                                @php
+                                                    $colorValues = isset($color->pivot->color_values)
+                                                        ? json_decode($color->pivot->color_values, true)
+                                                        : [$color->pivot->value];
+
+                                                    $colorCodes = \App\Models\AttributeValue::whereIn(
+                                                        'id',
+                                                        $colorValues,
+                                                    )
+                                                        ->pluck('value')
+                                                        ->toArray();
+
+                                                    if (count($colorCodes) === 1) {
+                                                        $backgroundStyle = "background-color: {$colorCodes[0]};";
+                                                    } elseif (count($colorCodes) > 1) {
+                                                        // Build conic-gradient string
+                                                        $segments = [];
+                                                        $step = 100 / count($colorCodes);
+                                                        $start = 0;
+
+                                                        foreach ($colorCodes as $code) {
+                                                            $end = $start + $step;
+                                                            $segments[] = "{$code} {$start}% {$end}%";
+                                                            $start = $end;
+                                                        }
+
+                                                        $backgroundStyle =
+                                                            'background: conic-gradient(' .
+                                                            implode(', ', $segments) .
+                                                            ');';
+                                                    } else {
+                                                        $backgroundStyle = 'background-color: #ccc;';
+                                                    }
+                                                @endphp
+
+
                                                 <div data-attrval="{{ $color->attr_id }}" data-color="{{ $color->value }}"
                                                     data-prid="{{ $product->id }}" data-key="{{ $key }}"
                                                     data-image="{{ !is_null($color->image) ? url(asset('storage/' . $color->image)) : url(asset('assets/frontend/images/t-shirt.png')) }}"
                                                     class="entry {{ $key2 == 0 ? 'active' : '' }}"
-                                                    style="background: {{ $color->value }};">&nbsp;</div>
+                                                    style="{{ $backgroundStyle }} border-radius: 50%; width: 30px; height: 30px; display: inline-block;">
+                                                    &nbsp;</div>
                                             @endforeach
                                         @endisset
+
+                                        {{-- @php
+                                            $colorValues = [];
+
+                                            foreach ($product->color as $colorItem) {
+                                                $values = isset($colorItem->pivot->color_values)
+                                                    ? json_decode($colorItem->pivot->color_values, true)
+                                                    : [$colorItem->pivot->value];
+
+                                                $colorValues = array_merge($colorValues, $values);
+                                            }
+
+                                            // Remove duplicates if needed
+                                            $colorValues = array_unique($colorValues);
+
+                                            // Get attribute values from DB
+                                            $colorAttributes = \App\Models\AttributeValue::whereIn(
+                                                'id',
+                                                $colorValues,
+                                            )->get(['id', 'value']);
+
+                                            // Build comma-separated strings
+                                            $colorHexes = $colorAttributes->pluck('value')->toArray();
+                                            $colorIds = $colorAttributes->pluck('id')->toArray();
+
+                                            $colorString = implode(', ', $colorHexes);
+                                            $colorIdString = implode(', ', $colorIds);
+                                        @endphp
+
+                                        <input type="hidden" name="product[{{ $key }}][color_attribute_id]"
+                                            value="{{ $colorIdString }}" id="color_attr_{{ $key }}">
+                                        <input type="hidden" name="product[{{ $key }}][color]"
+                                            value="{{ $colorString }}" id="color_{{ $key }}"> --}}
+
+
 
                                         <input type="hidden" name="product[{{ $key }}][color_attribute_id]"
                                             value="{{ $product->color[0]->attr_id }}" id="color_attr_{{ $key }}">
@@ -231,7 +303,8 @@
                 const key = $(this).data('key');
 
                 // Clone the FIRST matching wrapper
-                const $originalWrapper = $(`.color-size-wrapper[data-productid="${productId}"][data-key="${key}"]`).first();
+                const $originalWrapper = $(
+                    `.color-size-wrapper[data-productid="${productId}"][data-key="${key}"]`).first();
                 const $clone = $originalWrapper.clone();
 
                 // Reset selects inside clone
@@ -258,7 +331,8 @@
                 const time = Date.now();
                 $clone.find('[name]').each(function() {
                     const name = $(this).attr('name');
-                    const newName = name.replace(`product[${key}]`, `product[${key}][extra][${time}]`);
+                    const newName = name.replace(`product[${key}]`,
+                        `product[${key}][extra][${time}]`);
                     $(this).attr('name', newName);
                 });
 
@@ -442,7 +516,7 @@
                 let extraCost = parseFloat($(this).data('cost'))
                 let quantity = $(this).val();
 
-                if(extraCost > 0 && quantity > 0){
+                if (extraCost > 0 && quantity > 0) {
 
                     Swal.fire({
                         icon: "info",

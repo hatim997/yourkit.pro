@@ -13,7 +13,7 @@ class ProductAttribute extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['value', 'product_id', 'attribute_id', 'status', 'image', 'extra_cost'];
+    protected $fillable = ['value', 'product_id', 'attribute_id', 'status', 'image', 'extra_cost', 'color_values'];
 
     /**
      * Get the user that owns the ProductAttribute

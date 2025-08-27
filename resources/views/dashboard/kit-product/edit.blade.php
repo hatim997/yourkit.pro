@@ -159,12 +159,18 @@
                             <label class="form-label">Colors & Images</label>
                             <div class="row colorItemContainer">
                                 @foreach ($kitProduct->color as $index => $color)
+                                    @php
+                                        $selectedValues = isset($color->pivot->color_values)
+                                            ? json_decode($color->pivot->color_values) ?? []
+                                            : [$color->pivot->value];
+                                    @endphp
                                     <div class="row colorItemContainer mt-3" data-id="{{ $color->pivot->id }}">
                                         <div class="col-md-5">
-                                            <select class="form-select" disabled>
+                                            <select class="select2 form-select" disabled multiple>
                                                 @foreach ($colorAttributes->attributeValues as $clr)
                                                     <option value="{{ $clr->id }}"
-                                                        {{ $clr->id == $color->pivot->value ? 'selected' : '' }}>{{ $clr->value_name }} ({{ $clr->value }})
+                                                        {{ in_array($clr->id, $selectedValues) ? 'selected' : '' }}>
+                                                        {{ $clr->value_name }} ({{ $clr->value }})
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -207,20 +213,20 @@
                 $('#slug').val(slug);
             });
 
+            let colorItemIndex = $('.colorItemContainer').length;
             $('#adsMoreBtn').on('click', function(e) {
                 e.preventDefault();
                 const newColorBlock = `
                     <div class="row colorItemContainer mt-3">
                         <div class="col-md-5">
-                            <select name="color_id[]" class="select2 form-select">
-                                <option disabled selected>Select Color</option>
+                            <select name="color_id[${colorItemIndex}][]" class="select2 form-select" multiple>
                                 @foreach ($colorAttributes->attributeValues as $color)
                                     <option value="{{ $color->id }}">{{ $color->value_name }} ({{ $color->value }})</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-5">
-                            <input type="file" name="image[]" class="form-control" accept="image/*"/>
+                            <input type="file" name="image[${colorItemIndex}]" class="form-control" accept="image/*"/>
                         </div>
                         <div class="col-md-2 d-flex align-items-center justify-content-end">
                             <button type="button" class="btn btn-danger btn-sm removeColorBtn">Remove</button>
@@ -228,6 +234,7 @@
                     </div>`;
                 $(this).before(newColorBlock);
                 $('.select2').select2();
+                colorItemIndex++;
             });
 
             $(document).on('click', '.removeColorBtn', function() {

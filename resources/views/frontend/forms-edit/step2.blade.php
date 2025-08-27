@@ -62,7 +62,7 @@
                             <li>
                                 <div class="pro-img">
                                     <img class="img-fluid" src="{{ url('assets/frontend/' . $image->image) }}"
-                                        alt="" />
+                                        alt="{{ $position->title ?? env('APP_NAME') }}" />
                                 </div>
                                 {{-- <input type="radio" onclick="changeImage('{{ url('assets/frontend/'.$image->image) }}', '{{ $image->location }}')" id="{{ $position->type }}[{{ $image->location }}]" name="positions[{{ $position->type }}][{{ $image->location }}]" value="{{ $image->id }}"> --}}
 

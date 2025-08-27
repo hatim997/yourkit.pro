@@ -28,8 +28,8 @@ class KitProductController extends Controller
     {
         try {
             $this->authorize('view kit product');
-            $kitProducts = Product::with('category','subcategory')->where('product_type', 1)->get();
-            return view('dashboard.kit-product.index',compact('kitProducts'));
+            $kitProducts = Product::with('category', 'subcategory')->where('product_type', 1)->get();
+            return view('dashboard.kit-product.index', compact('kitProducts'));
         } catch (\Throwable $th) {
             Log::error('Kit Product Index Failed', ['error' => $th->getMessage()]);
             return redirect()->back()->with('error', "Something went wrong! Please try again later");
@@ -48,7 +48,7 @@ class KitProductController extends Controller
             $subcategories = SubCategory::where('status', 1)->get();
             $sizeAttributes = Attribute::with('attributeValues')->findOrFail(1);
             $colorAttributes = Attribute::with('attributeValues')->findOrFail(2);
-            return view('dashboard.kit-product.create', compact('categories','subcategories','sizeAttributes','colorAttributes'));
+            return view('dashboard.kit-product.create', compact('categories', 'subcategories', 'sizeAttributes', 'colorAttributes'));
         } catch (\Throwable $th) {
             Log::error('Kit Product Add Failed', ['error' => $th->getMessage()]);
             return redirect()->back()->with('error', "Something went wrong! Please try again later");
@@ -76,7 +76,8 @@ class KitProductController extends Controller
             'size_id' => 'nullable|array',
             'size_id.*' => 'exists:attribute_values,id',
             'color_id' => 'required|array',
-            'color_id.*' => 'exists:attribute_values,id',
+            'color_id.*' => 'required|array',
+            'color_id.*.*' => 'required|integer|exists:attribute_values,id',
             'image' => 'nullable|array',
             'image.*' => 'image|max_size',
         ]);
@@ -113,11 +114,24 @@ class KitProductController extends Controller
             }
             if (isset($request->color_id) && !empty($request->color_id)) {
                 foreach ($request->color_id as $k => $item) {
+                    if (!is_array($item) || empty($item)) {
+                        continue; // Skip if this item isn't a proper array
+                    }
+
+                    // Optional: Convert all to integers (defensive programming)
+                    $item = array_map('intval', $item);
+
+                    // Pick the first color as the primary value
+                    $firstColorId = $item[0] ?? null;
+                    if (!$firstColorId) {
+                        continue;
+                    }
                     $extraCost = ProductExtraCost::where(['sub_category_id' => $request->subcategory_id, 'attribute_value_id' => $item])->first();
                     $productAttr =  ProductAttribute::create([
                         'product_id' => $product->id,
                         'attribute_id' => 2,
-                        'value' => $item,
+                        'value' => $firstColorId,
+                        'color_values' => json_encode($item),
                         'extra_cost' => $extraCost->amount ?? 0.00
                     ]);
                     if (!empty($request->image[$k])) {
@@ -160,14 +174,14 @@ class KitProductController extends Controller
     {
         try {
             $this->authorize('update kit product');
-            $kitProduct = Product::with('size','color')->findOrFail($id);
+            $kitProduct = Product::with('size', 'color')->findOrFail($id);
             $productSizeAttributes = ProductAttribute::where('product_id', $id)->where('attribute_id', 1)->get()->pluck('value')->toArray();
             $productColorAttributes = ProductAttribute::where('product_id', $id)->where('attribute_id', 2)->get()->pluck('value')->toArray();
             $categories = Category::where('status', 1)->get();
             $subcategories = SubCategory::where('status', 1)->get();
             $sizeAttributes = Attribute::with('attributeValues')->findOrFail(1);
             $colorAttributes = Attribute::with('attributeValues')->findOrFail(2);
-            return view('dashboard.kit-product.edit', compact('productSizeAttributes','productColorAttributes','kitProduct','categories','subcategories','sizeAttributes','colorAttributes'));
+            return view('dashboard.kit-product.edit', compact('productSizeAttributes', 'productColorAttributes', 'kitProduct', 'categories', 'subcategories', 'sizeAttributes', 'colorAttributes'));
         } catch (\Throwable $th) {
             throw $th;
             Log::error('Kit Product Edit Failed', ['error' => $th->getMessage()]);
@@ -194,8 +208,9 @@ class KitProductController extends Controller
             'status' => 'required|in:1,0',
             'size_id' => 'nullable|array',
             'size_id.*' => 'exists:attribute_values,id',
-            'color_id' => 'nullable|array',
-            'color_id.*' => 'exists:attribute_values,id',
+            'color_id' => 'required|array',
+            'color_id.*' => 'required|array',
+            'color_id.*.*' => 'required|integer|exists:attribute_values,id',
             'image' => 'nullable|array',
             'image.*' => 'image|max_size',
         ]);
@@ -235,12 +250,25 @@ class KitProductController extends Controller
             }
             if (isset($request->color_id) && !empty($request->color_id)) {
                 foreach ($request->color_id as $k => $item) {
+                    if (!is_array($item) || empty($item)) {
+                        continue; // Skip if this item isn't a proper array
+                    }
+
+                    // Optional: Convert all to integers (defensive programming)
+                    $item = array_map('intval', $item);
+
+                    // Pick the first color as the primary value
+                    $firstColorId = $item[0] ?? null;
+                    if (!$firstColorId) {
+                        continue;
+                    }
                     Log::info('Color ID', ['color_id' => $item]);
                     $extraCost = ProductExtraCost::where(['sub_category_id' => $request->subcategory_id, 'attribute_value_id' => $item])->first();
                     $productAttr =  ProductAttribute::create([
                         'product_id' => $product->id,
                         'attribute_id' => 2,
-                        'value' => $item,
+                        'value' => $firstColorId,
+                        'color_values' => json_encode($item),
                         'extra_cost' => $extraCost->amount ?? 0.00
                     ]);
                     if (!empty($request->image[$k])) {

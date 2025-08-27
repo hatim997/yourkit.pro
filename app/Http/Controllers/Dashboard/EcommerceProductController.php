@@ -183,6 +183,7 @@ class EcommerceProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // dd($request->all());
         $this->authorize('update ecommerce product');
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -193,12 +194,13 @@ class EcommerceProductController extends Controller
             'status' => 'required|in:1,0',
             'size_chart' => 'nullable|file|max_size',
             'quantity' => 'nullable|array',
-            'quantity.*' => 'integer|min:0',
+            'quantity.*' => 'nullable|integer|min:0',
             'discount_percentage' => 'nullable|array',
-            'discount_percentage.*' => 'integer|min:0|max:100',
+            'discount_percentage.*' => 'nullable|integer|min:0|max:100',
         ]);
 
         if ($validator->fails()) {
+            Log::error('Ecommerce Product Update Failed', ['error' => $validator->errors()]);
             return redirect()->back()->withErrors($validator)->withInput($request->all())->with('error', 'Validation Error!');
         }
 
@@ -225,6 +227,10 @@ class EcommerceProductController extends Controller
             {
                 ProductVolumeDiscount::where('product_id', $product->id)->delete();
                 foreach ($request->quantity as $key => $quantity) {
+                    // ✅ skip empty/null quantities
+                    if ($quantity === null || $quantity === '') {
+                        continue;
+                    }
                     $productVolumeDiscount = new ProductVolumeDiscount();
                     $productVolumeDiscount->product_id = $product->id;
                     $productVolumeDiscount->quantity = $quantity;

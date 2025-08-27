@@ -145,7 +145,7 @@
                                                 target="_blank">
                                                 <img class="img-fluid"
                                                     src="{{ url(asset('assets/frontend/images/size_chart.png')) }}"
-                                                    alt="">
+                                                    alt="{{ $product->name ?? env('APP_NAME') }}">
                                             </a>
                                         </li>
                                     @endif

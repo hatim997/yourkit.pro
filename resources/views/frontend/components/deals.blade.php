@@ -16,7 +16,7 @@
                         <div class="deal-img">
                            <img class="img-fluid"
      src="{{ $product->ecommerce()->first()?->images()->first()?->image ? url('storage/' . $product->ecommerce()->first()->images()->first()->image) : asset('assets/frontend/images/logo.png') }}"
-     alt="Product Image" />
+     alt="{{ $product->name ?? env('APP_NAME') }}" />
                             {{-- <span class="hot-tag">Hot <br />Deal</span> --}}
                         </div>
                         <div class="content-prt">

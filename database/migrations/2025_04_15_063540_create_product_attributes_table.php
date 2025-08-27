@@ -23,6 +23,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->tinyInteger('status')->default(1);
             $table->string('value');
+            $table->text('color_values');
             $table->double('ecom_cost', 10, 2)->default(0.00);
             $table->double('extra_cost', 10, 2)->default(0.00);
             $table->string('image', 200)->nullable();

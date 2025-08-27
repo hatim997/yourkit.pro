@@ -58,7 +58,7 @@ class ProductController extends Controller
 
     public function store(Request $request, CartRepository $cartRepository)
     {
-        // dd($request->all());
+        dd($request->all());
         $input = $request->all();
         DB::beginTransaction();
         //dd( $input);
